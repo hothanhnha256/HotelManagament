@@ -34,11 +34,9 @@ export default function RoomManagement() {
     fetchDataRoom();
   }, []);
 
-  // Lọc và sắp xếp dữ liệu
   const filteredData = useMemo(() => {
     let filtered = data;
 
-    // Tìm kiếm
     if (searchInput) {
       filtered = data.filter(
         (item) =>
@@ -49,28 +47,24 @@ export default function RoomManagement() {
       );
     }
 
-    // Lọc theo tình trạng
     if (filterTinhTrang) {
       filtered = filtered.filter((item) =>
         item.tinhTrang.toLowerCase().includes(filterTinhTrang.toLowerCase())
       );
     }
 
-    // Lọc theo mã số
     if (filterMaSo) {
       filtered = filtered.filter((item) =>
         item.maSo.toLowerCase().includes(filterMaSo.toLowerCase())
       );
     }
 
-    // Lọc theo địa chỉ
     if (filterDiaChi) {
       filtered = filtered.filter((item) =>
         item.diaChi.toLowerCase().includes(filterDiaChi.toLowerCase())
       );
     }
 
-    // Sắp xếp
     if (sortConfig) {
       filtered = [...filtered].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -93,13 +87,11 @@ export default function RoomManagement() {
     sortConfig,
   ]);
 
-  // Phân trang dữ liệu
   const paginatedData = useMemo(() => {
     const startIndex = currentPage * rowsPerPage;
     return filteredData.slice(startIndex, startIndex + rowsPerPage);
   }, [filteredData, currentPage, rowsPerPage]);
 
-  // Tổng số trang
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
   const handleSort = (key: keyof dataRoom) => {
@@ -113,7 +105,7 @@ export default function RoomManagement() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-    setCurrentPage(0); // Reset về trang đầu
+    setCurrentPage(0);
   };
 
   return (
@@ -131,7 +123,7 @@ export default function RoomManagement() {
           <h2 className="text-2xl font-bold mb-2 text-black dark:text-white">
             Quản lý phòng
           </h2>
-          <div className="flex place-content-between mb-4">
+          <div className="flex flex-col md:flex-row place-content-between mb-4 gap-2">
             <input
               value={searchInput}
               onChange={handleSearch}

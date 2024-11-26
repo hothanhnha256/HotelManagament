@@ -1,5 +1,7 @@
 "use client";
 
+import ConfigRoom from "@/component/configRoom/configRoom";
+
 export default function Page({ params }: { params: { roomId: string } }) {
-  return <div className="text-black">My Post: {params.roomId}</div>;
+  return <ConfigRoom id={params.roomId} />;
 }
