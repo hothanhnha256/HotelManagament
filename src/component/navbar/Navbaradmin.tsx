@@ -46,17 +46,6 @@ export default function Sidebar() {
           <ul className="space-y-4 text-lg font-semibold">
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/sample"
-                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
-                  : ""
-              } flex items-center`}
-            >
-              <Link href="/sample" legacyBehavior>
-                <a className="w-full">Sample</a>
-              </Link>
-            </li>
-            <li
-              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/homepage"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
@@ -79,12 +68,12 @@ export default function Sidebar() {
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/material"
+                pathname === "/facilities"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/material" legacyBehavior>
+              <Link href="/facilities" legacyBehavior>
                 <a className="w-full">Cơ sở vật chất</a>
               </Link>
             </li>
@@ -101,23 +90,23 @@ export default function Sidebar() {
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/billService"
+                pathname === "/serviceUsageInvoice"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/billService" legacyBehavior>
+              <Link href="/serviceUsageInvoice" legacyBehavior>
                 <a className="w-full">Hóa đơn sử dụng dịch vụ</a>
               </Link>
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/orderBill"
+                pathname === "/priceList"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/orderBill" legacyBehavior>
+              <Link href="/priceList" legacyBehavior>
                 <a className="w-full">Bảng giá</a>
               </Link>
             </li>
@@ -134,12 +123,12 @@ export default function Sidebar() {
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "consumerGoods"
+                pathname === "/deviceRoom"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/consumerGood" legacyBehavior>
+              <Link href="/deviceRoom" legacyBehavior>
                 <a className="w-full">Đồ dùng trong phòng</a>
               </Link>
             </li>

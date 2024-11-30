@@ -155,7 +155,15 @@ export default function OrderOfRoom(props: OrderOfRoomParams) {
                         {order.status}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        <a href={`/room/${props.id}/detail/${order.id}`}>Xem</a>
+                        <button
+                          onClick={() => {
+                            setOrderDetailId(order.id);
+                            setOpenOrderDetail(true);
+                          }}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                        >
+                          Detail
+                        </button>
                       </td>
                     </tr>
                   ))}
