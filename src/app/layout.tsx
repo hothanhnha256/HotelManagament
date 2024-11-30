@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Navbar from "@/component/navbar/Navbaradmin";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -27,14 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-background text-foreground font-[family-name:var(--font-geist-sans)]">
-        <div className="w-full min-h-screen bg-gradient-to-r bg">
-          <div className="flex">
-            <Navbar />
-          </div>
-          <div className="min-h-[calc(100vh)] flex items-center justify-center">
-            {children}
-          </div>
-        </div>
+        {children}
       </body>
     </html>
   );
