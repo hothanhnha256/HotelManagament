@@ -24,6 +24,10 @@ export default function UserSidebar() {
     }
   }, [isDarkMode]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
   return (
     <>
       <button
@@ -87,6 +91,16 @@ export default function UserSidebar() {
               <Link href="/orderRoom" legacyBehavior>
                 <a className="w-full">Thông tin của tôi</a>
               </Link>
+            </li>
+            <li
+              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
+              flex items-center
+              ${isDarkMode}
+              `}
+            >
+              <button className="" onClick={handleLogout}>
+                Đăng xuất
+              </button>
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 

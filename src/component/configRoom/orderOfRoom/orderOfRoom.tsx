@@ -155,7 +155,7 @@ export default function OrderOfRoom(props: OrderOfRoomParams) {
                         {order.status}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        <a href={`/room/${props.id}/detail/${order.id}`}>Xem</a>
+                        <a href={`${props.id}/detail/${order.id}`}>Xem</a>
                       </td>
                     </tr>
                   ))}

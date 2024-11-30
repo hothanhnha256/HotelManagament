@@ -14,7 +14,7 @@ export default function DetailRoom(props: ConfigDetailRoomProps) {
         DetailId {props.detailId}
       </h1>
       <button
-        onClick={() => router.push(`/room/${props.roomId}`)}
+        onClick={() => router.push(`/admin/room/${props.roomId}`)}
         className="mb-4 bg-blue-500 text-white px-4 py-2 rounded"
       >
         Back to OrderRoom
