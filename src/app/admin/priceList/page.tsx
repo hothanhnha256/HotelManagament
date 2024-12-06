@@ -1,7 +1,4 @@
+import PriceList from "@/component/priceList/priceList";
 export default function Page() {
-  return (
-    <div>
-      <h1>ServiceUsageInvoice</h1>
-    </div>
-  );
+  return <PriceList />;
 }

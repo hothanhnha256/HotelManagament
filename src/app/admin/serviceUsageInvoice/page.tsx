@@ -1,7 +1,4 @@
+import ServiceUsageInvoice from "@/component/serviceUsageInvoice/ServiceUsageInvoice";
 export default function Page() {
-  return (
-    <div>
-      <h1>ServiceUsageInvoice</h1>
-    </div>
-  );
+  return <ServiceUsageInvoice />;
 }

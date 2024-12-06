@@ -1,7 +1,4 @@
+import Facilities from "@/component/facilities/facilities";
 export default function Page() {
-  return (
-    <div>
-      <h1>ServiceUsageInvoice</h1>
-    </div>
-  );
+  return <Facilities />;
 }

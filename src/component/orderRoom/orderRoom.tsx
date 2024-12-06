@@ -1,41 +1,47 @@
+"use client";
 import { useState, useEffect, useMemo } from "react";
-
-interface DetailOfRoomParams {
-  id: string;
-}
-
-interface Device {
+import OrderRoomDetail from "./openOrderRoomDetail/orderRoomDetail";
+import CreateOrderRoom from "./createOrderRoom/createOrderRoom";
+interface OrderRoom {
   id: string;
   name: string;
   type: string;
   status: string;
 }
 
-const fakeDataDevices: Device[] = [
-  { id: "1", name: "Device 1", type: "Type A", status: "Active" },
-  { id: "2", name: "Device 2", type: "Type B", status: "Inactive" },
-  { id: "3", name: "Device 3", type: "Type A", status: "Active" },
+const fakeDataOrderRooms: OrderRoom[] = [
+  { id: "1", name: "OrderRoom 1", type: "Type A", status: "Active" },
+  { id: "2", name: "OrderRoom 2", type: "Type B", status: "Inactive" },
+  { id: "3", name: "OrderRoom 3", type: "Type A", status: "Active" },
+  { id: "4", name: "OrderRoom 4", type: "Type B", status: "Inactive" },
+  { id: "5", name: "OrderRoom 5", type: "Type A", status: "Active" },
+  { id: "6", name: "OrderRoom 6", type: "Type B", status: "Inactive" },
+  { id: "7", name: "OrderRoom 7", type: "Type A", status: "Active" },
+  { id: "8", name: "OrderRoom 8", type: "Type B", status: "Inactive" },
   // Add more fake data as needed
 ];
 
-export default function DetailOfRoom(props: DetailOfRoomParams) {
-  const [data, setData] = useState<Device[]>([]);
+export default function OrderRoom() {
+  const [data, setData] = useState<OrderRoom[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage] = useState(10);
   const [filterStatus, setFilterStatus] = useState("");
+  const [openCreateOrderRoom, setOpenCreateOrderRoom] = useState(false);
+  const [openOrderRoomDetail, setOpenOrderRoomDetail] = useState(false);
+  const [selectedOrderRoom, setSelectedOrderRoom] = useState("");
 
-  const fetchDataDevices = async () => {
+  const fetchDataOrderRooms = async () => {
     setIsLoading(true);
     setTimeout(() => {
-      setData(fakeDataDevices);
+      setData(fakeDataOrderRooms);
       setIsLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
-    fetchDataDevices();
+    fetchDataOrderRooms();
   }, []);
 
   const filteredData = useMemo(() => {
@@ -67,7 +73,10 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
 
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
-      <h1>Detail</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+        Đơn đặt phòng{" "}
+      </h1>
+
       {isLoading ? (
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -94,7 +103,14 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+            <button
+              onClick={() => setOpenCreateOrderRoom(true)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Create OrderRoom
+            </button>
           </div>
+
           {filteredData.length === 0 ? (
             <div>No data available</div>
           ) : (
@@ -114,22 +130,33 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Details
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((device) => (
-                    <tr key={device.id}>
+                  {paginatedData.map((OrderRoom) => (
+                    <tr key={OrderRoom.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.id}
+                        {OrderRoom.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.name}
+                        {OrderRoom.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.type}
+                        {OrderRoom.type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.status}
+                        {OrderRoom.status}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <button
+                          onClick={() => setOpenOrderRoomDetail(true)}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                        >
+                          Details
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -137,6 +164,19 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               </table>
             </div>
           )}
+          {openCreateOrderRoom && (
+            <CreateOrderRoom
+              setIsCreate={setOpenCreateOrderRoom}
+              fetchDataOrderRoom={() => fetchDataOrderRooms()}
+            />
+          )}
+          {openOrderRoomDetail && (
+            <OrderRoomDetail
+              onClose={() => setOpenOrderRoomDetail(false)}
+              id={selectedOrderRoom}
+            />
+          )}
+
           <div className="pagination mt-4 flex items-center justify-center gap-2">
             <button
               onClick={() => setCurrentPage(0)}

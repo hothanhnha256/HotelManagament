@@ -1,41 +1,47 @@
+"use client";
 import { useState, useEffect, useMemo } from "react";
-
-interface DetailOfRoomParams {
-  id: string;
-}
-
-interface Device {
+import FacilitiesDetail from "./openFacilitiesDetail/facilitiesDetail";
+import CreateFacilities from "./createFacilities/createFacilities";
+interface Facilities {
   id: string;
   name: string;
   type: string;
   status: string;
 }
 
-const fakeDataDevices: Device[] = [
-  { id: "1", name: "Device 1", type: "Type A", status: "Active" },
-  { id: "2", name: "Device 2", type: "Type B", status: "Inactive" },
-  { id: "3", name: "Device 3", type: "Type A", status: "Active" },
+const fakeDataFacilitiess: Facilities[] = [
+  { id: "1", name: "Facilities 1", type: "Type A", status: "Active" },
+  { id: "2", name: "Facilities 2", type: "Type B", status: "Inactive" },
+  { id: "3", name: "Facilities 3", type: "Type A", status: "Active" },
+  { id: "4", name: "Facilities 4", type: "Type B", status: "Inactive" },
+  { id: "5", name: "Facilities 5", type: "Type A", status: "Active" },
+  { id: "6", name: "Facilities 6", type: "Type B", status: "Inactive" },
+  { id: "7", name: "Facilities 7", type: "Type A", status: "Active" },
+  { id: "8", name: "Facilities 8", type: "Type B", status: "Inactive" },
   // Add more fake data as needed
 ];
 
-export default function DetailOfRoom(props: DetailOfRoomParams) {
-  const [data, setData] = useState<Device[]>([]);
+export default function Facilities() {
+  const [data, setData] = useState<Facilities[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage] = useState(10);
   const [filterStatus, setFilterStatus] = useState("");
+  const [openCreateFacilities, setOpenCreateFacilities] = useState(false);
+  const [openFacilitiesDetail, setOpenFacilitiesDetail] = useState(false);
+  const [selectedFacilities, setSelectedFacilities] = useState("");
 
-  const fetchDataDevices = async () => {
+  const fetchDataFacilitiess = async () => {
     setIsLoading(true);
     setTimeout(() => {
-      setData(fakeDataDevices);
+      setData(fakeDataFacilitiess);
       setIsLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
-    fetchDataDevices();
+    fetchDataFacilitiess();
   }, []);
 
   const filteredData = useMemo(() => {
@@ -67,7 +73,10 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
 
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
-      <h1>Detail</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+        Cơ sở vật chất{" "}
+      </h1>
+
       {isLoading ? (
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -94,7 +103,14 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+            <button
+              onClick={() => setOpenCreateFacilities(true)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Create Facilities
+            </button>
           </div>
+
           {filteredData.length === 0 ? (
             <div>No data available</div>
           ) : (
@@ -114,22 +130,33 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Details
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((device) => (
-                    <tr key={device.id}>
+                  {paginatedData.map((Facilities) => (
+                    <tr key={Facilities.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.id}
+                        {Facilities.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.name}
+                        {Facilities.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.type}
+                        {Facilities.type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.status}
+                        {Facilities.status}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <button
+                          onClick={() => setOpenFacilitiesDetail(true)}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                        >
+                          Details
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -137,6 +164,19 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               </table>
             </div>
           )}
+          {openCreateFacilities && (
+            <CreateFacilities
+              setIsCreate={setOpenCreateFacilities}
+              fetchDataFacilities={() => fetchDataFacilitiess()}
+            />
+          )}
+          {openFacilitiesDetail && (
+            <FacilitiesDetail
+              onClose={() => setOpenFacilitiesDetail(false)}
+              id={selectedFacilities}
+            />
+          )}
+
           <div className="pagination mt-4 flex items-center justify-center gap-2">
             <button
               onClick={() => setCurrentPage(0)}

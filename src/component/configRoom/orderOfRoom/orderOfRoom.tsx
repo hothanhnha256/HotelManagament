@@ -200,11 +200,21 @@ export default function OrderOfRoom(props: OrderOfRoomParams) {
             >
               {">>"}
             </button>
-            <span className="text-black dark:text-white">
-              Page{" "}
-              <strong>
-                {currentPage + 1} of {totalPages}
-              </strong>
+            <span>
+              Go to page{" "}
+              <input
+                type="number"
+                value={currentPage + 1}
+                onChange={(e) =>
+                  setCurrentPage(
+                    Math.min(Number(e.target.value) - 1, totalPages)
+                  )
+                }
+                className="w-10 text-center  py-1 border rounded
+                  placeholder-gray-400
+                "
+              />{" "}
+              of {totalPages}
             </span>
           </div>
         </div>

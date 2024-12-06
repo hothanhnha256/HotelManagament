@@ -1,41 +1,65 @@
+"use client";
 import { useState, useEffect, useMemo } from "react";
+import PriceListDetail from "./openPriceListDetail/priceListDetail";
+import { AdjustPriceListDetail } from "./adjustPriceList/adjustPriceListInterface";
+import AdjustPriceList from "./adjustPriceList/adjustPriceList";
+import Calendar from "./calendar";
 
-interface DetailOfRoomParams {
-  id: string;
-}
-
-interface Device {
+interface Room {
   id: string;
   name: string;
-  type: string;
+  type: "VIP" | "Normal";
   status: string;
+  prices: { date: string; price: number }[];
 }
 
-const fakeDataDevices: Device[] = [
-  { id: "1", name: "Device 1", type: "Type A", status: "Active" },
-  { id: "2", name: "Device 2", type: "Type B", status: "Inactive" },
-  { id: "3", name: "Device 3", type: "Type A", status: "Active" },
+const fakeDataRooms: Room[] = [
+  {
+    id: "1",
+    name: "Room 101",
+    type: "VIP",
+    status: "Active",
+    prices: Array.from({ length: 30 }, (_, i) => ({
+      date: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      price: 200 + i,
+    })),
+  },
+  {
+    id: "2",
+    name: "Room 102",
+    type: "Normal",
+    status: "Active",
+    prices: Array.from({ length: 30 }, (_, i) => ({
+      date: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      price: 100 + i,
+    })),
+  },
   // Add more fake data as needed
 ];
 
-export default function DetailOfRoom(props: DetailOfRoomParams) {
-  const [data, setData] = useState<Device[]>([]);
+export default function PriceList() {
+  const [data, setData] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage] = useState(10);
-  const [filterStatus, setFilterStatus] = useState("");
+  const [filterType, setFilterType] = useState<"VIP" | "Normal" | "">("");
+  const [openAdjust, setOpenAdjust] = useState(false);
+  const [openPriceListDetail, setOpenPriceListDetail] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
-  const fetchDataDevices = async () => {
+  const fetchDataRooms = async () => {
     setIsLoading(true);
     setTimeout(() => {
-      setData(fakeDataDevices);
+      setData(fakeDataRooms);
       setIsLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
-    fetchDataDevices();
+    fetchDataRooms();
   }, []);
 
   const filteredData = useMemo(() => {
@@ -49,25 +73,19 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
       );
     }
 
-    if (filterStatus) {
-      filtered = filtered.filter((item) =>
-        item.status.toLowerCase().includes(filterStatus.toLowerCase())
-      );
+    if (filterType) {
+      filtered = filtered.filter((item) => item.type === filterType);
     }
 
     return filtered;
-  }, [data, searchInput, filterStatus]);
-
-  const paginatedData = useMemo(() => {
-    const startIndex = currentPage * rowsPerPage;
-    return filteredData.slice(startIndex, startIndex + rowsPerPage);
-  }, [filteredData, currentPage, rowsPerPage]);
-
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  }, [data, searchInput, filterType]);
 
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
-      <h1>Detail</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+        Price Management
+      </h1>
+
       {isLoading ? (
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -86,15 +104,24 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               className="p-2 border border-gray-300 rounded"
             />
             <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              value={filterType}
+              onChange={(e) =>
+                setFilterType(e.target.value as "VIP" | "Normal" | "")
+              }
               className="p-2 border border-gray-300 rounded"
             >
-              <option value="">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="">All Types</option>
+              <option value="VIP">VIP</option>
+              <option value="Normal">Normal</option>
             </select>
+            <button
+              onClick={() => setOpenAdjust(true)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Setting Price by Type
+            </button>
           </div>
+
           {filteredData.length === 0 ? (
             <div>No data available</div>
           ) : (
@@ -114,22 +141,36 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Details
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((device) => (
-                    <tr key={device.id}>
+                  {filteredData.map((room) => (
+                    <tr key={room.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.id}
+                        {room.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.name}
+                        {room.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.type}
+                        {room.type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.status}
+                        {room.status}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <button
+                          onClick={() => {
+                            setSelectedRoom(room);
+                            setOpenPriceListDetail(true);
+                          }}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                        >
+                          Details
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -137,54 +178,18 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               </table>
             </div>
           )}
-          <div className="pagination mt-4 flex items-center justify-center gap-2">
-            <button
-              onClick={() => setCurrentPage(0)}
-              disabled={currentPage === 0}
-              className="px-2 py-1 border rounded"
-            >
-              {"<<"}
-            </button>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-              disabled={currentPage === 0}
-              className="px-2 py-1 border rounded"
-            >
-              {"<"}
-            </button>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
-              }
-              disabled={currentPage === totalPages - 1}
-              className="px-2 py-1 border rounded"
-            >
-              {">"}
-            </button>
-            <button
-              onClick={() => setCurrentPage(totalPages - 1)}
-              disabled={currentPage === totalPages - 1}
-              className="px-2 py-1 border rounded"
-            >
-              {">>"}
-            </button>
-            <span>
-              Go to page{" "}
-              <input
-                type="number"
-                value={currentPage + 1}
-                onChange={(e) =>
-                  setCurrentPage(
-                    Math.min(Number(e.target.value) - 1, totalPages)
-                  )
-                }
-                className="w-10 text-center  py-1 border rounded
-                  placeholder-gray-400
-                "
-              />{" "}
-              of {totalPages}
-            </span>
-          </div>
+          {openAdjust && (
+            <AdjustPriceList
+              setIsAdjust={setOpenAdjust}
+              fetchDataPriceList={() => fetchDataRooms()}
+            />
+          )}
+          {openPriceListDetail && selectedRoom && (
+            <PriceListDetail
+              onClose={() => setOpenPriceListDetail(false)}
+              room={selectedRoom}
+            />
+          )}
         </div>
       )}
     </div>

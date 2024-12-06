@@ -1,41 +1,70 @@
+"use client";
 import { useState, useEffect, useMemo } from "react";
-
-interface DetailOfRoomParams {
-  id: string;
-}
-
-interface Device {
+import ServiceUsageInvoiceDetail from "./openServiceUsageInvoiceDetail/serviceUsageInvoiceDetail";
+import CreateServiceUsageInvoice from "./createServiceUsageInvoice/createServiceUsageInvoice";
+interface ServiceUsageInvoice {
   id: string;
   name: string;
   type: string;
   status: string;
 }
 
-const fakeDataDevices: Device[] = [
-  { id: "1", name: "Device 1", type: "Type A", status: "Active" },
-  { id: "2", name: "Device 2", type: "Type B", status: "Inactive" },
-  { id: "3", name: "Device 3", type: "Type A", status: "Active" },
+const fakeDataServiceUsageInvoices: ServiceUsageInvoice[] = [
+  { id: "1", name: "ServiceUsageInvoice 1", type: "Type A", status: "Active" },
+  {
+    id: "2",
+    name: "ServiceUsageInvoice 2",
+    type: "Type B",
+    status: "Inactive",
+  },
+  { id: "3", name: "ServiceUsageInvoice 3", type: "Type A", status: "Active" },
+  {
+    id: "4",
+    name: "ServiceUsageInvoice 4",
+    type: "Type B",
+    status: "Inactive",
+  },
+  { id: "5", name: "ServiceUsageInvoice 5", type: "Type A", status: "Active" },
+  {
+    id: "6",
+    name: "ServiceUsageInvoice 6",
+    type: "Type B",
+    status: "Inactive",
+  },
+  { id: "7", name: "ServiceUsageInvoice 7", type: "Type A", status: "Active" },
+  {
+    id: "8",
+    name: "ServiceUsageInvoice 8",
+    type: "Type B",
+    status: "Inactive",
+  },
   // Add more fake data as needed
 ];
 
-export default function DetailOfRoom(props: DetailOfRoomParams) {
-  const [data, setData] = useState<Device[]>([]);
+export default function ServiceUsageInvoice() {
+  const [data, setData] = useState<ServiceUsageInvoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage] = useState(10);
   const [filterStatus, setFilterStatus] = useState("");
+  const [openCreateServiceUsageInvoice, setOpenCreateServiceUsageInvoice] =
+    useState(false);
+  const [openServiceUsageInvoiceDetail, setOpenServiceUsageInvoiceDetail] =
+    useState(false);
+  const [selectedServiceUsageInvoice, setSelectedServiceUsageInvoice] =
+    useState("");
 
-  const fetchDataDevices = async () => {
+  const fetchDataServiceUsageInvoices = async () => {
     setIsLoading(true);
     setTimeout(() => {
-      setData(fakeDataDevices);
+      setData(fakeDataServiceUsageInvoices);
       setIsLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
-    fetchDataDevices();
+    fetchDataServiceUsageInvoices();
   }, []);
 
   const filteredData = useMemo(() => {
@@ -67,7 +96,10 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
 
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
-      <h1>Detail</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+        Hóa đơn sử dụng dịch vụ{" "}
+      </h1>
+
       {isLoading ? (
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -94,7 +126,14 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+            <button
+              onClick={() => setOpenCreateServiceUsageInvoice(true)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Create ServiceUsageInvoice
+            </button>
           </div>
+
           {filteredData.length === 0 ? (
             <div>No data available</div>
           ) : (
@@ -114,22 +153,33 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Details
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((device) => (
-                    <tr key={device.id}>
+                  {paginatedData.map((ServiceUsageInvoice) => (
+                    <tr key={ServiceUsageInvoice.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.id}
+                        {ServiceUsageInvoice.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.name}
+                        {ServiceUsageInvoice.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.type}
+                        {ServiceUsageInvoice.type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {device.status}
+                        {ServiceUsageInvoice.status}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <button
+                          onClick={() => setOpenServiceUsageInvoiceDetail(true)}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                        >
+                          Details
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -137,6 +187,21 @@ export default function DetailOfRoom(props: DetailOfRoomParams) {
               </table>
             </div>
           )}
+          {openCreateServiceUsageInvoice && (
+            <CreateServiceUsageInvoice
+              setIsCreate={setOpenCreateServiceUsageInvoice}
+              fetchDataServiceUsageInvoice={() =>
+                fetchDataServiceUsageInvoices()
+              }
+            />
+          )}
+          {openServiceUsageInvoiceDetail && (
+            <ServiceUsageInvoiceDetail
+              onClose={() => setOpenServiceUsageInvoiceDetail(false)}
+              id={selectedServiceUsageInvoice}
+            />
+          )}
+
           <div className="pagination mt-4 flex items-center justify-center gap-2">
             <button
               onClick={() => setCurrentPage(0)}
