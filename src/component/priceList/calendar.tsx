@@ -44,7 +44,7 @@ export default function Calendar({ prices, onPriceChange }: CalendarProps) {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-y-scroll h-[calc(70vh)]">
       <div className="grid grid-cols-7 gap-4 mb-4">
         {daysOfWeek.map((day) => (
           <div
