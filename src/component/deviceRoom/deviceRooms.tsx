@@ -2,67 +2,78 @@
 import { useState, useEffect, useMemo } from "react";
 import DeviceRoomsDetail from "./openDeviceRoomsDetail/deviceRoomsDetail";
 import CreateDeviceRooms from "./createDeviceRooms/createDeviceRooms";
-interface DeviceRooms {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
+
+export interface DeviceRoomsProps {
+  ID: string;
+  TenSanPham: string;
+  SoLuong: number;
+  GiaNhapDonVi: string;
+  GiaBanDonVi: string;
 }
 
-const fakeDataDeviceRoomss: DeviceRooms[] = [
-  { id: "1", name: "DeviceRooms 1", type: "Type A", status: "Active" },
-  { id: "2", name: "DeviceRooms 2", type: "Type B", status: "Inactive" },
-  { id: "3", name: "DeviceRooms 3", type: "Type A", status: "Active" },
-  { id: "4", name: "DeviceRooms 4", type: "Type B", status: "Inactive" },
-  { id: "5", name: "DeviceRooms 5", type: "Type A", status: "Active" },
-  { id: "6", name: "DeviceRooms 6", type: "Type B", status: "Inactive" },
-  { id: "7", name: "DeviceRooms 7", type: "Type A", status: "Active" },
-  { id: "8", name: "DeviceRooms 8", type: "Type B", status: "Inactive" },
-  // Add more fake data as needed
-];
-
 export default function DeviceRooms() {
-  const [data, setData] = useState<DeviceRooms[]>([]);
+  const [data, setData] = useState<DeviceRoomsProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage] = useState(10);
-  const [filterStatus, setFilterStatus] = useState("");
   const [openCreateDeviceRooms, setOpenCreateDeviceRooms] = useState(false);
   const [openDeviceRoomsDetail, setOpenDeviceRoomsDetail] = useState(false);
   const [selectedDeviceRooms, setSelectedDeviceRooms] = useState("");
+  const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataDeviceRoomss = async () => {
+  const fetchDataDeviceRooms = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setData(fakeDataDeviceRoomss);
+    try {
+      const response = await fetch(`${APIURL}/goods`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      setData(result.data);
       setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.log("Failed to fetch data: ", error);
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchDataDeviceRoomss();
+    fetchDataDeviceRooms();
   }, []);
+
+  const deleteDataDeviceRooms = async (id: string) => {
+    try {
+      const response = await fetch(`${APIURL}/goods/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Deleted DeviceRooms: ", result);
+      fetchDataDeviceRooms();
+    } catch (error) {
+      console.log("Failed to delete data: ", error);
+    }
+  };
 
   const filteredData = useMemo(() => {
     let filtered = data;
 
     if (searchInput) {
-      filtered = data.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-          item.type.toLowerCase().includes(searchInput.toLowerCase())
-      );
-    }
-
-    if (filterStatus) {
-      filtered = filtered.filter((item) =>
-        item.status.toLowerCase().includes(filterStatus.toLowerCase())
+      filtered = data.filter((item) =>
+        item.TenSanPham.toLowerCase().includes(searchInput.toLowerCase())
       );
     }
 
     return filtered;
-  }, [data, searchInput, filterStatus]);
+  }, [data, searchInput]);
 
   const paginatedData = useMemo(() => {
     const startIndex = currentPage * rowsPerPage;
@@ -94,25 +105,18 @@ export default function DeviceRooms() {
               placeholder="Search by name or type"
               className="p-2 border border-gray-300 rounded"
             />
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            >
-              <option value="">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
             <button
               onClick={() => setOpenCreateDeviceRooms(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
-              Create DeviceRooms
+              Tạo mới
             </button>
           </div>
 
           {filteredData.length === 0 ? (
-            <div>No data available</div>
+            <div>
+              <p>Không có dữ liệu</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -122,40 +126,60 @@ export default function DeviceRooms() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Name
+                      Tên sản phẩm
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Type
+                      Số lượng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Status
+                      Giá nhập đơn vị
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Details
+                      Giá bán đơn vị
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Cập nhật
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Xóa
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((DeviceRooms) => (
-                    <tr key={DeviceRooms.id}>
+                  {paginatedData.map((deviceRoom) => (
+                    <tr key={deviceRoom.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {DeviceRooms.id}
+                        {deviceRoom.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {DeviceRooms.name}
+                        {deviceRoom.TenSanPham}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {DeviceRooms.type}
+                        {deviceRoom.SoLuong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {DeviceRooms.status}
+                        {deviceRoom.GiaNhapDonVi}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {deviceRoom.GiaBanDonVi}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => setOpenDeviceRoomsDetail(true)}
+                          onClick={() => {
+                            setSelectedDeviceRooms(deviceRoom.ID);
+                            setOpenDeviceRoomsDetail(true);
+                          }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
-                          Details
+                          Cập nhật
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <button
+                          onClick={() => deleteDataDeviceRooms(deviceRoom.ID)}
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                        >
+                          Xóa
                         </button>
                       </td>
                     </tr>
@@ -167,13 +191,22 @@ export default function DeviceRooms() {
           {openCreateDeviceRooms && (
             <CreateDeviceRooms
               setIsCreate={setOpenCreateDeviceRooms}
-              fetchDataDeviceRooms={() => fetchDataDeviceRoomss()}
+              fetchDataDeviceRooms={fetchDataDeviceRooms}
             />
           )}
           {openDeviceRoomsDetail && (
             <DeviceRoomsDetail
               onClose={() => setOpenDeviceRoomsDetail(false)}
-              id={selectedDeviceRooms}
+              entry={
+                data.find((item) => item.ID === selectedDeviceRooms) || {
+                  ID: "",
+                  TenSanPham: "",
+                  SoLuong: 0,
+                  GiaNhapDonVi: "",
+                  GiaBanDonVi: "",
+                }
+              }
+              refreshData={fetchDataDeviceRooms}
             />
           )}
 
@@ -209,7 +242,7 @@ export default function DeviceRooms() {
               {">>"}
             </button>
             <span>
-              Go to page{" "}
+              Đến trang{" "}
               <input
                 type="number"
                 value={currentPage + 1}
@@ -218,11 +251,9 @@ export default function DeviceRooms() {
                     Math.min(Number(e.target.value) - 1, totalPages)
                   )
                 }
-                className="w-10 text-center  py-1 border rounded
-                  placeholder-gray-400
-                "
+                className="w-10 text-center py-1 border rounded placeholder-gray-400"
               />{" "}
-              of {totalPages}
+              /{totalPages}
             </span>
           </div>
         </div>

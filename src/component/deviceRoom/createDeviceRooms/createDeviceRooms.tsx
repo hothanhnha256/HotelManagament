@@ -12,9 +12,10 @@ export default function CreateDeviceRooms({
 }: CreateDeviceRoomsProps) {
   const [newDeviceRooms, setNewDeviceRooms] = useState<CreateDeviceRoomsDetail>(
     {
-      maSo: "",
-      tinhTrang: "",
-      diaChi: "",
+      goodName: "",
+      salePricePerUnit: "",
+      importPricePerUnit: "",
+      quantity: 0,
     }
   );
 
@@ -23,14 +24,35 @@ export default function CreateDeviceRooms({
     setNewDeviceRooms((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const APIURL = process.env.NEXT_PUBLIC_API_URL;
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate creating a new DeviceRooms
-    setTimeout(() => {
-      // Add the new DeviceRooms to the fake data (in a real app, you would send a request to the server)
-      fetchDataDeviceRooms(); // Refetch the data after creating a new DeviceRooms
-      setIsCreate(false); // Close the create DeviceRooms form
-    }, 500);
+    console.log(JSON.stringify(newDeviceRooms));
+
+    // Prepare form data in x-www-form-urlencoded format
+    const formData = new URLSearchParams();
+    formData.append("goodName", newDeviceRooms.goodName);
+    formData.append("salePricePerUnit", newDeviceRooms.salePricePerUnit);
+    formData.append("importPricePerUnit", newDeviceRooms.importPricePerUnit);
+    formData.append("quantity", newDeviceRooms.quantity.toString());
+    try {
+      const response = await fetch(`${APIURL}/goods`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Create new DeviceRooms: ", result);
+      fetchDataDeviceRooms();
+      setIsCreate(false); // Close the form after successful creation
+    } catch (error) {
+      console.log("Failed to create deviceRoom ", error);
+    }
   };
 
   return (
@@ -39,33 +61,44 @@ export default function CreateDeviceRooms({
         <h2 className="text-2xl font-bold mb-4">Tạo CSVC mới</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Mã Số</label>
+            <label className="block text-gray-700">Tên sản phẩm</label>
             <input
               type="text"
-              name="maSo"
-              value={newDeviceRooms.maSo}
+              name="goodName"
+              value={newDeviceRooms.goodName}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Tình Trạng</label>
+            <label className="block text-gray-700">Giá nhập mỗi đơn vị</label>
             <input
               type="text"
-              name="tinhTrang"
-              value={newDeviceRooms.tinhTrang}
+              name="importPricePerUnit"
+              value={newDeviceRooms.importPricePerUnit}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Địa Chỉ</label>
+            <label className="block text-gray-700">Giá bán mỗi đơn vị</label>
             <input
               type="text"
-              name="diaChi"
-              value={newDeviceRooms.diaChi}
+              name="salePricePerUnit"
+              value={newDeviceRooms.salePricePerUnit}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Số lượng</label>
+            <input
+              type="number"
+              name="quantity"
+              value={newDeviceRooms.quantity}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required

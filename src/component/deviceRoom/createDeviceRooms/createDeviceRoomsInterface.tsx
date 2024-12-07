@@ -1,5 +1,6 @@
 export interface CreateDeviceRoomsDetail {
-  maSo: string;
-  tinhTrang: string;
-  diaChi: string;
+  goodName: string;
+  salePricePerUnit: string;
+  importPricePerUnit: string;
+  quantity: number;
 }
