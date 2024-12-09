@@ -1,24 +1,25 @@
 import { useState } from "react";
-import type { CreateAmenitiesDetail } from "./createAmenitiesInterface";
+import type { CreateAmenitiesRoomDetail } from "./createAmenitiesRoomInterface";
 
-interface CreateAmenitiesProps {
+interface CreateAmenitiesRoomProps {
   setIsCreate: (isCreate: boolean) => void;
-  fetchDataAmenities: () => void;
+  fetchDataAmenitiesRoom: () => void;
 }
 
-export default function CreateAmenities({
+export default function CreateAmenitiesRoom({
   setIsCreate,
-  fetchDataAmenities,
-}: CreateAmenitiesProps) {
-  const [newAmenities, setNewAmenities] = useState<CreateAmenitiesDetail>({
-    ten: "",
-    moTa: "",
-  });
+  fetchDataAmenitiesRoom,
+}: CreateAmenitiesRoomProps) {
+  const [newAmenitiesRoom, setNewAmenitiesRoom] =
+    useState<CreateAmenitiesRoomDetail>({
+      ten: "",
+      moTa: "",
+    });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewAmenities((prev) => ({ ...prev, [name]: value }));
+    setNewAmenitiesRoom((prev) => ({ ...prev, [name]: value }));
   };
 
   const formatDateTime = (dateString: string) => {
@@ -32,7 +33,7 @@ export default function CreateAmenities({
   };
 
   const validateInputs = () => {
-    if (!newAmenities.ten) {
+    if (!newAmenitiesRoom.ten) {
       setError("Tên không được để trống.");
       return false;
     }
@@ -47,11 +48,11 @@ export default function CreateAmenities({
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("AmenitiesId", newAmenities.ten);
-    formData.append("startTime", newAmenities.moTa);
+    formData.append("ten", newAmenitiesRoom.ten);
+    formData.append("moTa", newAmenitiesRoom.moTa);
 
     try {
-      const response = await fetch(`${APIURL}/amenities`, {
+      const response = await fetch(`${APIURL}/amenities/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -62,12 +63,12 @@ export default function CreateAmenities({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new Amenities: ", result);
-      fetchDataAmenities();
+      console.log("Create new AmenitiesRoom: ", result);
+      fetchDataAmenitiesRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create Amenities ", error);
-      setError("Failed to create Amenities. Please try again.");
+      console.log("Failed to create AmenitiesRoom ", error);
+      setError("Failed to create AmenitiesRoom. Please try again.");
     }
   };
 
@@ -80,8 +81,8 @@ export default function CreateAmenities({
             <label className="block text-gray-700">Tên tiện nghi</label>
             <input
               type="text"
-              name="ten"
-              value={newAmenities.ten}
+              name="moTa"
+              value={newAmenitiesRoom.moTa}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
@@ -91,8 +92,8 @@ export default function CreateAmenities({
             <label className="block text-gray-700">Mô tả</label>
             <input
               type="text"
-              name="moTa"
-              value={newAmenities.moTa}
+              name="ten"
+              value={newAmenitiesRoom.ten}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
