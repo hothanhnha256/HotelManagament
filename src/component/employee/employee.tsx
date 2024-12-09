@@ -1,38 +1,47 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import DeviceRoomsDetail from "./openDeviceRoomsDetail/deviceRoomsDetail";
-import CreateDeviceRooms from "./createDeviceRooms/createDeviceRooms";
+import { useState, useEffect } from "react";
+import EmployeeDetail from "./openEmployeeDetail/employeeDetail";
+import CreateEmployee from "./createEmployee/createEmployee";
 
-export interface DeviceRoomsProps {
+export interface EmployeeProps {
   ID: string;
-  TenSanPham: string;
-  SoLuong: number;
-  GiaNhapDonVi: string;
-  GiaBanDonVi: string;
+  HoTen: string;
+  GioiTinh: string;
+  Luong: number;
+  NgaySinh: string;
+  MaBHXH: string;
+  CCCD: string;
+  SoTaiKhoan: string;
+  VaiTro: string;
+  ThoiGianBatDauLamViec: string;
+  TrinhDoHocVan: string;
+  MaChiNhanh: string;
 }
 
-export default function DeviceRooms() {
-  const [data, setData] = useState<DeviceRoomsProps[]>([]);
+export default function Employee() {
+  const [data, setData] = useState<EmployeeProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
+  const [role, setRole] = useState("");
+  const [name, setName] = useState("");
+  const [debouncedName, setDebouncedName] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateDeviceRooms, setOpenCreateDeviceRooms] = useState(false);
-  const [openDeviceRoomsDetail, setOpenDeviceRoomsDetail] = useState(false);
-  const [selectedDeviceRooms, setSelectedDeviceRooms] = useState("");
+  const [openCreateEmployee, setOpenCreateEmployee] = useState(false);
+  const [openEmployeeDetail, setOpenEmployeeDetail] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataDeviceRooms = async (
+  const fetchDataEmployee = async (
     limit: number,
     page: number,
-    searchId: string
+    role: string,
+    name: string
   ) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${APIURL}/goods?limit=${limit}&page=${page}&search=${searchId}`,
+        `${APIURL}/employees/all?limit=${limit}&page=${page}&role=${role}&name=${name}`,
         {
           method: "GET",
           headers: {
@@ -54,50 +63,54 @@ export default function DeviceRooms() {
   };
 
   useEffect(() => {
-    fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-  }, [rowsPerPage, currentPage, debouncedSearchInput]);
+    fetchDataEmployee(rowsPerPage, currentPage + 1, role, debouncedName);
+  }, [rowsPerPage, currentPage, role, debouncedName]);
 
-  const deleteDataDeviceRooms = async (id: string) => {
+  const deleteDataEmployee = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/goods/${id}`, {
+      const response = await fetch(`${APIURL}/employees/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted DeviceRooms: ", result);
-      fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
+      console.log("Deleted Employee: ", result);
+      fetchDataEmployee(rowsPerPage, currentPage + 1, role, debouncedName);
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
+    setName(e.target.value);
     setCurrentPage(0);
   };
 
   // Debounce the search input
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearchInput(searchInput);
-    }, 2000); // Adjust the delay as needed
+      setDebouncedName(name);
+    }, 500); // Adjust the delay as needed
 
     return () => {
       clearTimeout(handler);
     };
-  }, [searchInput]);
+  }, [name]);
 
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
   };
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý đồ dùng trong phòng
+        Quản lý nhân viên
       </h1>
 
       {isLoading ? (
@@ -112,7 +125,7 @@ export default function DeviceRooms() {
         <div className="justify-between items-center mb-4 w-full">
           <div className="flex flex-col md:flex-row place-content-between mb-4 gap-2">
             <input
-              value={searchInput}
+              value={name}
               onChange={handleSearch}
               placeholder="Tìm kiếm theo tên"
               className="p-2 border border-gray-300 rounded"
@@ -127,7 +140,7 @@ export default function DeviceRooms() {
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateDeviceRooms(true)}
+              onClick={() => setOpenCreateEmployee(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
               Tạo mới
@@ -147,16 +160,37 @@ export default function DeviceRooms() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tên sản phẩm
+                      Họ Tên
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Số lượng
+                      Giới Tính
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá nhập đơn vị
+                      Lương
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá bán đơn vị
+                      Ngày Sinh
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Mã BHXH
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      CCCD
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Số Tài Khoản
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Vai Trò
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Thời Gian Bắt Đầu Làm Việc
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Trình Độ Học Vấn
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Mã Chi Nhánh
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -167,28 +201,51 @@ export default function DeviceRooms() {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((deviceRoom) => (
-                    <tr key={deviceRoom.ID}>
+                  {data.map((employee) => (
+                    <tr key={employee.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.ID}
+                        {employee.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.TenSanPham}
+                        {employee.HoTen}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.SoLuong}
+                        {employee.GioiTinh}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaNhapDonVi}
+                        {employee.Luong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaBanDonVi}
+                        {new Date(employee.NgaySinh).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.MaBHXH}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.CCCD}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.SoTaiKhoan}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.VaiTro}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {new Date(
+                          employee.ThoiGianBatDauLamViec
+                        ).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.TrinhDoHocVan}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {employee.MaChiNhanh}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedDeviceRooms(deviceRoom.ID);
-                            setOpenDeviceRoomsDetail(true);
+                            setSelectedEmployee(employee.ID);
+                            setOpenEmployeeDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -197,7 +254,7 @@ export default function DeviceRooms() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataDeviceRooms(deviceRoom.ID)}
+                          onClick={() => deleteDataEmployee(employee.ID)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -209,35 +266,44 @@ export default function DeviceRooms() {
               </table>
             </div>
           )}
-          {openCreateDeviceRooms && (
-            <CreateDeviceRooms
-              setIsCreate={setOpenCreateDeviceRooms}
-              fetchDataDeviceRooms={() =>
-                fetchDataDeviceRooms(
+          {openCreateEmployee && (
+            <CreateEmployee
+              setIsCreate={setOpenCreateEmployee}
+              fetchDataEmployee={() =>
+                fetchDataEmployee(
                   rowsPerPage,
                   currentPage + 1,
-                  debouncedSearchInput
+                  role,
+                  debouncedName
                 )
               }
             />
           )}
-          {openDeviceRoomsDetail && (
-            <DeviceRoomsDetail
-              onClose={() => setOpenDeviceRoomsDetail(false)}
+          {openEmployeeDetail && (
+            <EmployeeDetail
+              onClose={() => setOpenEmployeeDetail(false)}
               entry={
-                data.find((item) => item.ID === selectedDeviceRooms) || {
+                data.find((item) => item.ID === selectedEmployee) || {
                   ID: "",
-                  TenSanPham: "",
-                  SoLuong: 0,
-                  GiaNhapDonVi: "",
-                  GiaBanDonVi: "",
+                  HoTen: "",
+                  GioiTinh: "",
+                  Luong: 0,
+                  NgaySinh: "",
+                  MaBHXH: "",
+                  CCCD: "",
+                  SoTaiKhoan: "",
+                  VaiTro: "",
+                  ThoiGianBatDauLamViec: "",
+                  TrinhDoHocVan: "",
+                  MaChiNhanh: "",
                 }
               }
               refreshData={() =>
-                fetchDataDeviceRooms(
+                fetchDataEmployee(
                   rowsPerPage,
                   currentPage + 1,
-                  debouncedSearchInput
+                  role,
+                  debouncedName
                 )
               }
             />
@@ -281,7 +347,7 @@ export default function DeviceRooms() {
                 value={currentPage + 1}
                 onChange={(e) =>
                   setCurrentPage(
-                    Math.min(Number(e.target.value) - 1, totalPages)
+                    Math.min(Number(e.target.value) - 1, totalPages - 1)
                   )
                 }
                 className="w-10 text-center py-1 border rounded placeholder-gray-400"

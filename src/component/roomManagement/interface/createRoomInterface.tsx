@@ -1,5 +1,7 @@
 export interface createRoom {
-  maSo: string;
-  tinhTrang: string;
-  diaChi: string;
+  capacity: number;
+  branchId: string;
+  description: string;
+  type: string;
+  roomNumber: number;
 }

@@ -1,30 +1,27 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import DeviceRoomsDetail from "./openDeviceRoomsDetail/deviceRoomsDetail";
-import CreateDeviceRooms from "./createDeviceRooms/createDeviceRooms";
+import { useState, useEffect } from "react";
+import AmenitiesDetail from "./openAmenitiesDetail/amenitiesDetail";
+import CreateAmenities from "./createAmenities/createAmenities";
 
-export interface DeviceRoomsProps {
+export interface AmenitiesProps {
   ID: string;
-  TenSanPham: string;
-  SoLuong: number;
-  GiaNhapDonVi: string;
-  GiaBanDonVi: string;
+  Ten: string;
+  MoTa: string;
 }
 
-export default function DeviceRooms() {
-  const [data, setData] = useState<DeviceRoomsProps[]>([]);
+export default function Amenities() {
+  const [data, setData] = useState<AmenitiesProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateDeviceRooms, setOpenCreateDeviceRooms] = useState(false);
-  const [openDeviceRoomsDetail, setOpenDeviceRoomsDetail] = useState(false);
-  const [selectedDeviceRooms, setSelectedDeviceRooms] = useState("");
+  const [openCreateAmenities, setOpenCreateAmenities] = useState(false);
+  const [openAmenitiesDetail, setOpenAmenitiesDetail] = useState(false);
+  const [selectedAmenities, setSelectedAmenities] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataDeviceRooms = async (
+  const fetchDataAmenities = async (
     limit: number,
     page: number,
     searchId: string
@@ -32,7 +29,7 @@ export default function DeviceRooms() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${APIURL}/goods?limit=${limit}&page=${page}&search=${searchId}`,
+        `${APIURL}/amenities/all?limit=${limit}&page=${page}&searchId=${searchId}`,
         {
           method: "GET",
           headers: {
@@ -54,20 +51,20 @@ export default function DeviceRooms() {
   };
 
   useEffect(() => {
-    fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-  }, [rowsPerPage, currentPage, debouncedSearchInput]);
+    fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput);
+  }, [rowsPerPage, currentPage, searchInput]);
 
-  const deleteDataDeviceRooms = async (id: string) => {
+  const deleteDataAmenities = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/goods/${id}`, {
+      const response = await fetch(`${APIURL}/Amenitiess/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted DeviceRooms: ", result);
-      fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
+      console.log("Deleted Amenities: ", result);
+      fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput);
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
@@ -78,17 +75,6 @@ export default function DeviceRooms() {
     setCurrentPage(0);
   };
 
-  // Debounce the search input
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchInput(searchInput);
-    }, 2000); // Adjust the delay as needed
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchInput]);
-
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -97,7 +83,7 @@ export default function DeviceRooms() {
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý đồ dùng trong phòng
+        Quản lý tiện ích
       </h1>
 
       {isLoading ? (
@@ -114,7 +100,7 @@ export default function DeviceRooms() {
             <input
               value={searchInput}
               onChange={handleSearch}
-              placeholder="Tìm kiếm theo tên"
+              placeholder="Tìm kiếm theo ID"
               className="p-2 border border-gray-300 rounded"
             />
             <select
@@ -127,7 +113,7 @@ export default function DeviceRooms() {
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateDeviceRooms(true)}
+              onClick={() => setOpenCreateAmenities(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
               Tạo mới
@@ -147,16 +133,10 @@ export default function DeviceRooms() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tên sản phẩm
+                      Tên
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Số lượng
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá nhập đơn vị
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá bán đơn vị
+                      Mô tả
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -167,28 +147,23 @@ export default function DeviceRooms() {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((deviceRoom) => (
-                    <tr key={deviceRoom.ID}>
+                  {data.map((Amenities) => (
+                    <tr key={Amenities.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.ID}
+                        {Amenities.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.TenSanPham}
+                        {Amenities.Ten}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.SoLuong}
+                        {Amenities.MoTa}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaNhapDonVi}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaBanDonVi}
-                      </td>
+                      \
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedDeviceRooms(deviceRoom.ID);
-                            setOpenDeviceRoomsDetail(true);
+                            setSelectedAmenities(Amenities.ID);
+                            setOpenAmenitiesDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -197,7 +172,7 @@ export default function DeviceRooms() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataDeviceRooms(deviceRoom.ID)}
+                          onClick={() => deleteDataAmenities(Amenities.ID)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -209,36 +184,27 @@ export default function DeviceRooms() {
               </table>
             </div>
           )}
-          {openCreateDeviceRooms && (
-            <CreateDeviceRooms
-              setIsCreate={setOpenCreateDeviceRooms}
-              fetchDataDeviceRooms={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
+          {openCreateAmenities && (
+            <CreateAmenities
+              setIsCreate={setOpenCreateAmenities}
+              fetchDataAmenities={() =>
+                fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput)
               }
             />
           )}
-          {openDeviceRoomsDetail && (
-            <DeviceRoomsDetail
-              onClose={() => setOpenDeviceRoomsDetail(false)}
+          {openAmenitiesDetail && (
+            <AmenitiesDetail
+              onClose={() => setOpenAmenitiesDetail(false)}
               entry={
-                data.find((item) => item.ID === selectedDeviceRooms) || {
-                  ID: "",
-                  TenSanPham: "",
-                  SoLuong: 0,
-                  GiaNhapDonVi: "",
-                  GiaBanDonVi: "",
+                data.find((item) => item.ID === selectedAmenities) || {
+                  MaGiamGia: "",
+                  ThoiGianBatDau: "",
+                  ThoiGianKetThuc: "",
+                  PhanTramGiamGia: "",
                 }
               }
               refreshData={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
+                fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput)
               }
             />
           )}

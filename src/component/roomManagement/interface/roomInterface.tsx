@@ -1,6 +1,13 @@
 export interface dataRoom {
-  id: string;
-  maSo: string;
-  tinhTrang: string;
-  diaChi: string;
+  MaPhong: string;
+  MaChiNhanh: string;
+  TrangThai: string;
+  LoaiPhong: string;
+  SoPhong: number;
+  MoTa: string;
+  IDNhanVienDonPhong: string;
+  IDNhanVienPhong: string;
+  IDGiamGia: string;
+  SucChua: number;
+  MaPhongLienKet: string;
 }

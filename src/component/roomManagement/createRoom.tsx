@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { dataRoom } from "./interface/roomInterface";
-import { fakeDataRoom } from "./fakedata/dataRoom";
+import { createRoom } from "./interface/createRoomInterface";
+import { BranchDetail } from "./interface/branchInterface";
 interface CreateRoomProps {
   setIsCreate: (isCreate: boolean) => void;
   fetchDataRoom: () => void;
@@ -10,27 +10,67 @@ export default function CreateRoom({
   setIsCreate,
   fetchDataRoom,
 }: CreateRoomProps) {
-  const [newRoom, setNewRoom] = useState<dataRoom>({
-    id: "",
-    maSo: "",
-    tinhTrang: "",
-    diaChi: "",
+  const [newRoom, setNewRoom] = useState<createRoom>({
+    capacity: 0,
+    branchId: "",
+    description: "",
+    type: "",
+    roomNumber: 0,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [branches, setBranches] = useState<BranchDetail[]>([]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setNewRoom((prev) => ({ ...prev, [name]: value }));
+    setNewRoom((prev: createRoom) => ({ ...prev, [name]: value }));
+  };
+  const handleFetchBranch = async () => {
+    const APIURL = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      const response = await fetch(`${APIURL}/branches`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Branches: ", result);
+      setBranches(result.data);
+    } catch (error) {
+      console.log("Failed to fetch branches: ", error);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate creating a new room
-    setTimeout(() => {
-      // Add the new room to the fake data (in a real app, you would send a request to the server)
-      fakeDataRoom.push(newRoom);
-      fetchDataRoom(); // Refetch the data after creating a new room
-      setIsCreate(false); // Close the create room form
-    }, 500);
+    const APIURL = process.env.NEXT_PUBLIC_API_URL;
+
+    // Prepare form data in x-www-form-urlencoded format
+    const formData = new URLSearchParams();
+    formData.append("capacity", newRoom.capacity.toString());
+    formData.append("branchId", newRoom.branchId);
+    formData.append("description", newRoom.description);
+    formData.append("type", newRoom.type);
+    formData.append("roomNumber", newRoom.roomNumber.toString());
+
+    try {
+      const response = await fetch(`${APIURL}/rooms`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+      console.log("Response: ", response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      fetchDataRoom();
+      setIsCreate(false); // Close the form after successful creation
+    } catch (error) {
+      console.log("Failed to create room: ", error);
+    }
   };
 
   return (
@@ -39,44 +79,65 @@ export default function CreateRoom({
         <h2 className="text-2xl font-bold mb-4">Tạo phòng mới</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">ID</label>
+            <label className="block text-gray-700">Sức chứa</label>
             <input
-              type="text"
-              name="id"
-              value={newRoom.id}
+              type="number"
+              name="capacity"
+              value={newRoom.capacity}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Mã Số</label>
+            <label className="block text-gray-700">Mã chi nhánh</label>
+            <select
+              name="branchId"
+              value={newRoom.branchId}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+              onClick={handleFetchBranch}
+            >
+              <option value="">Chọn chi nhánh</option>
+              {branches.map((branch) => (
+                <option key={branch.MaChiNhanh} value={branch.MaChiNhanh}>
+                  {branch.DiaChi}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Mô tả</label>
             <input
               type="text"
-              name="maSo"
-              value={newRoom.maSo}
+              name="description"
+              value={newRoom.description}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Tình Trạng</label>
-            <input
-              type="text"
-              name="tinhTrang"
-              value={newRoom.tinhTrang}
+            <label className="block text-gray-700">Loại phòng</label>
+            <select
+              name="type"
+              value={newRoom.type}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
-            />
+            >
+              <option value="">Chọn loại phòng</option>
+              <option value="vip">VIP</option>
+              <option value="normal">Normal</option>
+            </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Địa Chỉ</label>
+            <label className="block text-gray-700">Số phòng</label>
             <input
-              type="text"
-              name="diaChi"
-              value={newRoom.diaChi}
+              type="number"
+              name="roomNumber"
+              value={newRoom.roomNumber}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required

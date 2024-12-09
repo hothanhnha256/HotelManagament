@@ -84,16 +84,27 @@ export default function Sidebar() {
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/admin/orderRoom"
+                pathname === "/admin/amenities"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/admin/orderRoom" legacyBehavior>
-                <a className="w-full">Đơn đặt phòng</a>
+              <Link href="/admin/amenities" legacyBehavior>
+                <a className="w-full">Tiện ích</a>
               </Link>
             </li>
             <li
+              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
+                pathname === "/admin/employee"
+                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
+                  : ""
+              } flex items-center`}
+            >
+              <Link href="/admin/employee" legacyBehavior>
+                <a className="w-full">Nhân viên</a>
+              </Link>
+            </li>
+            {/* <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/serviceUsageInvoice"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
@@ -103,8 +114,8 @@ export default function Sidebar() {
               <Link href="/admin/serviceUsageInvoice" legacyBehavior>
                 <a className="w-full">Hóa đơn sử dụng dịch vụ</a>
               </Link>
-            </li>
-            <li
+            </li> */}
+            {/* <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/priceList"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
@@ -114,8 +125,8 @@ export default function Sidebar() {
               <Link href="/admin/priceList" legacyBehavior>
                 <a className="w-full">Bảng giá</a>
               </Link>
-            </li>
-            <li
+            </li> */}
+            {/* <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/bill"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
@@ -125,7 +136,7 @@ export default function Sidebar() {
               <Link href="/admin/bill" legacyBehavior>
                 <a className="w-full">Hóa đơn</a>
               </Link>
-            </li>
+            </li> */}
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/deviceRoom"
@@ -135,6 +146,17 @@ export default function Sidebar() {
             >
               <Link href="/admin/deviceRoom" legacyBehavior>
                 <a className="w-full">Đồ dùng trong phòng</a>
+              </Link>
+            </li>
+            <li
+              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
+                pathname === "/admin/discount"
+                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
+                  : ""
+              } flex items-center`}
+            >
+              <Link href="/admin/discount" legacyBehavior>
+                <a className="w-full">Giảm giá</a>
               </Link>
             </li>
             <li

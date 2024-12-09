@@ -1,30 +1,28 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import DeviceRoomsDetail from "./openDeviceRoomsDetail/deviceRoomsDetail";
-import CreateDeviceRooms from "./createDeviceRooms/createDeviceRooms";
+import { useState, useEffect } from "react";
+import DiscountDetail from "./openDiscountDetail/discountDetail";
+import CreateDiscount from "./createDiscount/createDiscount";
 
-export interface DeviceRoomsProps {
-  ID: string;
-  TenSanPham: string;
-  SoLuong: number;
-  GiaNhapDonVi: string;
-  GiaBanDonVi: string;
+export interface DiscountProps {
+  MaGiamGia: string;
+  ThoiGianBatDau: string;
+  ThoiGianKetThuc: string;
+  PhanTramGiamGia: string;
 }
 
-export default function DeviceRooms() {
-  const [data, setData] = useState<DeviceRoomsProps[]>([]);
+export default function Discount() {
+  const [data, setData] = useState<DiscountProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateDeviceRooms, setOpenCreateDeviceRooms] = useState(false);
-  const [openDeviceRoomsDetail, setOpenDeviceRoomsDetail] = useState(false);
-  const [selectedDeviceRooms, setSelectedDeviceRooms] = useState("");
+  const [openCreateDiscount, setOpenCreateDiscount] = useState(false);
+  const [openDiscountDetail, setOpenDiscountDetail] = useState(false);
+  const [selectedDiscount, setSelectedDiscount] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataDeviceRooms = async (
+  const fetchDataDiscount = async (
     limit: number,
     page: number,
     searchId: string
@@ -32,7 +30,7 @@ export default function DeviceRooms() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${APIURL}/goods?limit=${limit}&page=${page}&search=${searchId}`,
+        `${APIURL}/discounts/all?limit=${limit}&page=${page}&searchId=${searchId}`,
         {
           method: "GET",
           headers: {
@@ -54,20 +52,20 @@ export default function DeviceRooms() {
   };
 
   useEffect(() => {
-    fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-  }, [rowsPerPage, currentPage, debouncedSearchInput]);
+    fetchDataDiscount(rowsPerPage, currentPage + 1, searchInput);
+  }, [rowsPerPage, currentPage, searchInput]);
 
-  const deleteDataDeviceRooms = async (id: string) => {
+  const deleteDataDiscount = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/goods/${id}`, {
+      const response = await fetch(`${APIURL}/discounts/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted DeviceRooms: ", result);
-      fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
+      console.log("Deleted Discount: ", result);
+      fetchDataDiscount(rowsPerPage, currentPage + 1, searchInput);
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
@@ -78,17 +76,6 @@ export default function DeviceRooms() {
     setCurrentPage(0);
   };
 
-  // Debounce the search input
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchInput(searchInput);
-    }, 2000); // Adjust the delay as needed
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchInput]);
-
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -97,7 +84,7 @@ export default function DeviceRooms() {
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý đồ dùng trong phòng
+        Quản lý giảm giá
       </h1>
 
       {isLoading ? (
@@ -114,7 +101,7 @@ export default function DeviceRooms() {
             <input
               value={searchInput}
               onChange={handleSearch}
-              placeholder="Tìm kiếm theo tên"
+              placeholder="Tìm kiếm theo ID"
               className="p-2 border border-gray-300 rounded"
             />
             <select
@@ -127,7 +114,7 @@ export default function DeviceRooms() {
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateDeviceRooms(true)}
+              onClick={() => setOpenCreateDiscount(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
               Tạo mới
@@ -144,19 +131,16 @@ export default function DeviceRooms() {
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      ID
+                      Mã giảm giá
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tên sản phẩm
+                      Thời gian bắt đầu
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Số lượng
+                      Thời gian kết thúc
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá nhập đơn vị
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá bán đơn vị
+                      Phần trăm giảm giá
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -167,28 +151,25 @@ export default function DeviceRooms() {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((deviceRoom) => (
-                    <tr key={deviceRoom.ID}>
+                  {data.map((discount) => (
+                    <tr key={discount.MaGiamGia}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.ID}
+                        {discount.MaGiamGia}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.TenSanPham}
+                        {new Date(discount.ThoiGianBatDau).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.SoLuong}
+                        {new Date(discount.ThoiGianKetThuc).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaNhapDonVi}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaBanDonVi}
+                        {discount.PhanTramGiamGia}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedDeviceRooms(deviceRoom.ID);
-                            setOpenDeviceRoomsDetail(true);
+                            setSelectedDiscount(discount.MaGiamGia);
+                            setOpenDiscountDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -197,7 +178,7 @@ export default function DeviceRooms() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataDeviceRooms(deviceRoom.ID)}
+                          onClick={() => deleteDataDiscount(discount.MaGiamGia)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -209,36 +190,27 @@ export default function DeviceRooms() {
               </table>
             </div>
           )}
-          {openCreateDeviceRooms && (
-            <CreateDeviceRooms
-              setIsCreate={setOpenCreateDeviceRooms}
-              fetchDataDeviceRooms={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
+          {openCreateDiscount && (
+            <CreateDiscount
+              setIsCreate={setOpenCreateDiscount}
+              fetchDataDiscount={() =>
+                fetchDataDiscount(rowsPerPage, currentPage + 1, searchInput)
               }
             />
           )}
-          {openDeviceRoomsDetail && (
-            <DeviceRoomsDetail
-              onClose={() => setOpenDeviceRoomsDetail(false)}
+          {openDiscountDetail && (
+            <DiscountDetail
+              onClose={() => setOpenDiscountDetail(false)}
               entry={
-                data.find((item) => item.ID === selectedDeviceRooms) || {
-                  ID: "",
-                  TenSanPham: "",
-                  SoLuong: 0,
-                  GiaNhapDonVi: "",
-                  GiaBanDonVi: "",
+                data.find((item) => item.MaGiamGia === selectedDiscount) || {
+                  MaGiamGia: "",
+                  ThoiGianBatDau: "",
+                  ThoiGianKetThuc: "",
+                  PhanTramGiamGia: "",
                 }
               }
               refreshData={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
+                fetchDataDiscount(rowsPerPage, currentPage + 1, searchInput)
               }
             />
           )}
