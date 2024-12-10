@@ -10,6 +10,7 @@ export interface AmenitiesBranchInterface {
 export interface UpdateAmenitiesBranchDetail {
   ten: string;
   moTa: string;
+  branchId: string;
 }
 
 export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
@@ -17,12 +18,15 @@ export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
     useState<UpdateAmenitiesBranchDetail>({
       ten: props.entry.Ten,
       moTa: props.entry.MoTa,
+      branchId: props.entry.MaChiNhanh,
     });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setNewAmenitiesBranch((prev) => ({ ...prev, [name]: value }));
   };
@@ -45,8 +49,9 @@ export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("ten", newAmenitiesBranch.ten);
-    formData.append("moTa", newAmenitiesBranch.moTa);
+    formData.append("name", newAmenitiesBranch.ten);
+    formData.append("description", newAmenitiesBranch.moTa);
+    formData.append("branchId", newAmenitiesBranch.branchId);
 
     try {
       const response = await fetch(
@@ -79,7 +84,7 @@ export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black dark:text-white">
-            Chi tiết mã giảm giá
+            Chi tiết tiện nghi chi nhánh
           </h2>
           <button
             className="ml-4 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-black dark:text-white font-semibold py-1 px-2 border border-gray-300 dark:border-gray-600 rounded"
@@ -115,6 +120,28 @@ export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Mã chi nhánh</label>
+            <select
+              name="branchId"
+              value={newAmenitiesBranch.branchId}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded"
+              required
+            >
+              {props.entry.MaChiNhanh == "CN01" ? (
+                <>
+                  <option value="CN01">Điện Biên Phủ</option>
+                  <option value="CN02">Bà Huyện Thanh Quan</option>
+                </>
+              ) : (
+                <>
+                  <option value="CN02">Bà Huyện Thanh Quan</option>
+                  <option value="CN01">Điện Biên Phủ</option>
+                </>
+              )}
+            </select>
           </div>
           {error && <div className="mb-4 text-red-500">{error}</div>}
           <div className="flex justify-end">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { dataRoom } from "./interface/roomInterface";
 import CreateRoom from "./createRoom";
-
+import RoomDetail from "./openRoomDetail/RoomDetail";
 export default function RoomManagement() {
   const [data, setData] = useState<dataRoom[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +14,9 @@ export default function RoomManagement() {
   const [isCreate, setIsCreate] = useState(false);
   const [error, setError] = useState<string>("");
   const [totalPages, setTotalPages] = useState(0);
+  const [roomDetail, setRoomDetail] = useState<dataRoom | null>(null);
+  const [isRoomDetailOpen, setIsRoomDetailOpen] = useState(false);
+
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
   const [filterTinhTrang, setFilterTinhTrang] = useState("");
@@ -117,9 +120,9 @@ export default function RoomManagement() {
               className="p-2 border border-gray-300 rounded"
             >
               <option value="">Tất cả tình trạng</option>
-              <option value="Đang sử dụng">Đang sử dụng</option>
-              <option value="Trống">Trống</option>
-              <option value="Bảo trì">Bảo trì</option>
+              <option value="in use">Đang sử dụng</option>
+              <option value="empty">Trống</option>
+              <option value="maintenance">Bảo trì</option>
             </select>
             <select
               value={filterChiNhanh}
@@ -186,6 +189,9 @@ export default function RoomManagement() {
                     Loại Phòng
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Cập nhật
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Xem chi tiết
                   </th>
                 </tr>
@@ -206,6 +212,18 @@ export default function RoomManagement() {
                       {row.LoaiPhong}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <button
+                        onClick={() => {
+                          setRoomDetail(row);
+                          setIsRoomDetailOpen(true);
+                        }}
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                      >
+                        Cập nhật
+                      </button>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       <a href={`room/${row.MaPhong}`}>Xem</a>
                     </td>
                   </tr>
@@ -213,6 +231,22 @@ export default function RoomManagement() {
               </tbody>
             </table>
           </div>
+
+          {isRoomDetailOpen && (
+            <RoomDetail
+              entry={roomDetail}
+              onClose={() => setIsRoomDetailOpen(false)}
+              fetchDataRoom={() =>
+                fetchDataRoom(
+                  rowsPerPage,
+                  currentPage + 1,
+                  filterChiNhanh,
+                  filterTinhTrang,
+                  filterLoaiPhong
+                )
+              }
+            />
+          )}
           <div className="pagination mt-4 flex items-center justify-center gap-2">
             <button
               onClick={() => handlePageChange(0)}

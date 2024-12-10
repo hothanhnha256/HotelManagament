@@ -73,17 +73,6 @@ export default function Sidebar() {
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/admin/facilities"
-                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
-                  : ""
-              } flex items-center`}
-            >
-              <Link href="/admin/facilities" legacyBehavior>
-                <a className="w-full">Cơ sở vật chất</a>
-              </Link>
-            </li>
-            <li
-              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/amenities"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""

@@ -1,48 +1,39 @@
 "use client";
 import { useState, useEffect } from "react";
-import AmenitiesDetail from "./openAmenitiesDetail/amenitiesDetail";
-import CreateAmenities from "./createAmenities/createAmenities";
+import FacilitiesDetail from "./openFacilitiesDetail/amenitiesDetail";
+import CreateFacilities from "./createFacilities/createFacilities";
 
-export interface AmenitiesProps {
+export interface FacilitiesProps {
   ID: string;
   Ten: string;
   MoTa: string;
 }
 
-export default function Amenities() {
-  const [data, setData] = useState<AmenitiesProps[]>([]);
+export default function Facilities(id: string) {
+  const [data, setData] = useState<FacilitiesProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateAmenities, setOpenCreateAmenities] = useState(false);
-  const [openAmenitiesDetail, setOpenAmenitiesDetail] = useState(false);
-  const [selectedAmenities, setSelectedAmenities] = useState("");
-  const [totalPages, setTotalPages] = useState(0);
+  const [openCreateFacilities, setOpenCreateFacilities] = useState(false);
+  const [openFacilitiesDetail, setOpenFacilitiesDetail] = useState(false);
+  const [selectedFacilities, setSelectedFacilities] = useState("");
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataAmenities = async (
-    limit: number,
-    page: number,
-    searchId: string
-  ) => {
+  const fetchDataFacilities = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${APIURL}/amenities/all?limit=${limit}&page=${page}&searchId=${searchId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${APIURL}/facilities/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
       setData(result.data);
-      setTotalPages(Math.ceil(result.total / limit));
       setIsLoading(false);
     } catch (error) {
       console.log("Failed to fetch data: ", error);
@@ -51,20 +42,20 @@ export default function Amenities() {
   };
 
   useEffect(() => {
-    fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput);
+    fetchDataFacilities();
   }, [rowsPerPage, currentPage, searchInput]);
 
-  const deleteDataAmenities = async (id: string) => {
+  const deleteDataFacilities = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/Amenitiess/${id}`, {
+      const response = await fetch(`${APIURL}/Facilitiess/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted Amenities: ", result);
-      fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput);
+      console.log("Deleted Facilities: ", result);
+      fetchDataFacilities();
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
@@ -113,7 +104,7 @@ export default function Amenities() {
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateAmenities(true)}
+              onClick={() => setOpenCreateFacilities(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
               Tạo mới
@@ -147,23 +138,23 @@ export default function Amenities() {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((Amenities) => (
-                    <tr key={Amenities.ID}>
+                  {data.map((Facilities) => (
+                    <tr key={Facilities.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Amenities.ID}
+                        {Facilities.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Amenities.Ten}
+                        {Facilities.Ten}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Amenities.MoTa}
+                        {Facilities.MoTa}
                       </td>
                       \
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedAmenities(Amenities.ID);
-                            setOpenAmenitiesDetail(true);
+                            setSelectedFacilities(Facilities.ID);
+                            setOpenFacilitiesDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -172,7 +163,7 @@ export default function Amenities() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataAmenities(Amenities.ID)}
+                          onClick={() => deleteDataFacilities(Facilities.ID)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -184,28 +175,24 @@ export default function Amenities() {
               </table>
             </div>
           )}
-          {openCreateAmenities && (
-            <CreateAmenities
-              setIsCreate={setOpenCreateAmenities}
-              fetchDataAmenities={() =>
-                fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput)
-              }
+          {openCreateFacilities && (
+            <CreateFacilities
+              setIsCreate={setOpenCreateFacilities}
+              fetchDataFacilities={() => fetchDataFacilities()}
             />
           )}
-          {openAmenitiesDetail && (
-            <AmenitiesDetail
-              onClose={() => setOpenAmenitiesDetail(false)}
+          {openFacilitiesDetail && (
+            <FacilitiesDetail
+              onClose={() => setOpenFacilitiesDetail(false)}
               entry={
-                data.find((item) => item.ID === selectedAmenities) || {
+                data.find((item) => item.ID === selectedFacilities) || {
                   MaGiamGia: "",
                   ThoiGianBatDau: "",
                   ThoiGianKetThuc: "",
                   PhanTramGiamGia: "",
                 }
               }
-              refreshData={() =>
-                fetchDataAmenities(rowsPerPage, currentPage + 1, searchInput)
-              }
+              refreshData={() => fetchDataFacilities()}
             />
           )}
 

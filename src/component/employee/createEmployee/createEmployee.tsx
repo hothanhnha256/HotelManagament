@@ -87,7 +87,7 @@ export default function CreateEmployee({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md h-4/5 overflow-y-scroll">
         <h2 className="text-2xl font-bold mb-4 text-black dark:text-white">
           Tạo nhân viên mới
         </h2>

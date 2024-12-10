@@ -1,16 +1,16 @@
 import { useState } from "react";
-import type { CreateAmenitiesDetail } from "./createAmenitiesInterface";
+import type { CreateFacilitiesDetail } from "./createFacilitiesInterface";
 
-interface CreateAmenitiesProps {
+interface CreateFacilitiesProps {
   setIsCreate: (isCreate: boolean) => void;
-  fetchDataAmenities: () => void;
+  fetchDataFacilities: () => void;
 }
 
-export default function CreateAmenities({
+export default function CreateFacilities({
   setIsCreate,
-  fetchDataAmenities,
-}: CreateAmenitiesProps) {
-  const [newAmenities, setNewAmenities] = useState<CreateAmenitiesDetail>({
+  fetchDataFacilities,
+}: CreateFacilitiesProps) {
+  const [newFacilities, setNewFacilities] = useState<CreateFacilitiesDetail>({
     ten: "",
     moTa: "",
   });
@@ -18,7 +18,7 @@ export default function CreateAmenities({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewAmenities((prev) => ({ ...prev, [name]: value }));
+    setNewFacilities((prev) => ({ ...prev, [name]: value }));
   };
 
   const formatDateTime = (dateString: string) => {
@@ -32,7 +32,7 @@ export default function CreateAmenities({
   };
 
   const validateInputs = () => {
-    if (!newAmenities.ten) {
+    if (!newFacilities.ten) {
       setError("Tên không được để trống.");
       return false;
     }
@@ -47,11 +47,11 @@ export default function CreateAmenities({
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("AmenitiesId", newAmenities.ten);
-    formData.append("startTime", newAmenities.moTa);
+    formData.append("FacilitiesId", newFacilities.ten);
+    formData.append("startTime", newFacilities.moTa);
 
     try {
-      const response = await fetch(`${APIURL}/amenities`, {
+      const response = await fetch(`${APIURL}/Facilities`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -62,12 +62,12 @@ export default function CreateAmenities({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new Amenities: ", result);
-      fetchDataAmenities();
+      console.log("Create new Facilities: ", result);
+      fetchDataFacilities();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create Amenities ", error);
-      setError("Failed to create Amenities. Please try again.");
+      console.log("Failed to create Facilities ", error);
+      setError("Failed to create Facilities. Please try again.");
     }
   };
 
@@ -81,7 +81,7 @@ export default function CreateAmenities({
             <input
               type="text"
               name="ten"
-              value={newAmenities.ten}
+              value={newFacilities.ten}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
@@ -92,7 +92,7 @@ export default function CreateAmenities({
             <input
               type="text"
               name="moTa"
-              value={newAmenities.moTa}
+              value={newFacilities.moTa}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
