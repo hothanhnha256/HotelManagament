@@ -1,8 +1,5 @@
-import DetailOfRoom from "./detailOfRoom/detailOfRoom";
-import OrderOfRoom from "./orderOfRoom/orderOfRoom";
-import DeviceOfRoom from "./deviceOfRoom/deviceOfRoom";
 import { useRouter } from "next/navigation";
-
+import Facilities from "./facilitiesOfRoom/facilities";
 interface ConfigRoomProps {
   id: string;
 }
@@ -18,11 +15,9 @@ export default function ConfigRoom(props: ConfigRoomProps) {
       >
         Back to Room List
       </button>
-      <div className="grid gap-3">
-        <DetailOfRoom id={props.id} />
-        <DetailOfRoom id={props.id} />
-        <OrderOfRoom id={props.id} />
-      </div>
+      <Facilities idRoom={props.id} />
+
+      <div className="grid gap-3"></div>
     </div>
   );
 }

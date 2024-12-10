@@ -5,25 +5,32 @@ import CreateFacilities from "./createFacilities/createFacilities";
 
 export interface FacilitiesProps {
   ID: string;
-  Ten: string;
-  MoTa: string;
+  TenTrangBi: string;
+  GiaMua: string;
+  MaSanPham: string;
+  TinhTrang: string;
+  MaPhong: string;
+  imageURL: string;
 }
 
-export default function Facilities(id: string) {
+export default function Facilities({ idRoom }: { idRoom: string }) {
   const [data, setData] = useState<FacilitiesProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openCreateFacilities, setOpenCreateFacilities] = useState(false);
   const [openFacilitiesDetail, setOpenFacilitiesDetail] = useState(false);
-  const [selectedFacilities, setSelectedFacilities] = useState("");
+  const [selectedFacilities, setSelectedFacilities] =
+    useState<FacilitiesProps | null>(null);
+  const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchDataFacilities = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${APIURL}/facilities/${id}`, {
+      const response = await fetch(`${APIURL}/facilities/${idRoom}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -34,6 +41,7 @@ export default function Facilities(id: string) {
       }
       const result = await response.json();
       setData(result.data);
+      setTotalPages(Math.ceil(result.data.length / rowsPerPage));
       setIsLoading(false);
     } catch (error) {
       console.log("Failed to fetch data: ", error);
@@ -43,11 +51,15 @@ export default function Facilities(id: string) {
 
   useEffect(() => {
     fetchDataFacilities();
-  }, [rowsPerPage, currentPage, searchInput]);
+  }, []);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(data.length / rowsPerPage));
+  }, [data, rowsPerPage]);
 
   const deleteDataFacilities = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/Facilitiess/${id}`, {
+      const response = await fetch(`${APIURL}/facilities/${idRoom}/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -66,10 +78,32 @@ export default function Facilities(id: string) {
     setCurrentPage(0);
   };
 
+  const handleStatusFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setStatusFilter(e.target.value);
+    setCurrentPage(0);
+  };
+
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
   };
+
+  const filteredData = data.filter((facility) => {
+    const matchesSearch = facility.ID.toLowerCase().includes(
+      searchInput.toLowerCase()
+    );
+    const matchesStatus =
+      statusFilter === "all" ||
+      facility.TinhTrang.toLowerCase() === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const paginatedData = filteredData.slice(
+    currentPage * rowsPerPage,
+    (currentPage + 1) * rowsPerPage
+  );
 
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
@@ -95,6 +129,15 @@ export default function Facilities(id: string) {
               className="p-2 border border-gray-300 rounded"
             />
             <select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              className="p-2 border border-gray-300 rounded"
+            >
+              <option value="all">Tất cả</option>
+              <option value="good">Good</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+            <select
               value={rowsPerPage}
               onChange={handleRowsPerPageChange}
               className="p-2 border border-gray-300 rounded"
@@ -111,7 +154,7 @@ export default function Facilities(id: string) {
             </button>
           </div>
 
-          {data.length === 0 ? (
+          {paginatedData.length === 0 ? (
             <div>
               <p>Không có dữ liệu</p>
             </div>
@@ -127,7 +170,10 @@ export default function Facilities(id: string) {
                       Tên
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Mô tả
+                      Giá mua
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Tình trạng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -138,22 +184,24 @@ export default function Facilities(id: string) {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((Facilities) => (
-                    <tr key={Facilities.ID}>
+                  {paginatedData.map((facility) => (
+                    <tr key={facility.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Facilities.ID}
+                        {facility.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Facilities.Ten}
+                        {facility.TenTrangBi}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {Facilities.MoTa}
+                        {facility.GiaMua}
                       </td>
-                      \
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {facility.TinhTrang}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedFacilities(Facilities.ID);
+                            setSelectedFacilities(facility);
                             setOpenFacilitiesDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
@@ -163,7 +211,7 @@ export default function Facilities(id: string) {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataFacilities(Facilities.ID)}
+                          onClick={() => deleteDataFacilities(facility.ID)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -177,22 +225,17 @@ export default function Facilities(id: string) {
           )}
           {openCreateFacilities && (
             <CreateFacilities
+              idRoom={idRoom}
               setIsCreate={setOpenCreateFacilities}
-              fetchDataFacilities={() => fetchDataFacilities()}
+              fetchDataFacilities={fetchDataFacilities}
             />
           )}
-          {openFacilitiesDetail && (
+          {openFacilitiesDetail && selectedFacilities && (
             <FacilitiesDetail
+              idRoom={idRoom}
               onClose={() => setOpenFacilitiesDetail(false)}
-              entry={
-                data.find((item) => item.ID === selectedFacilities) || {
-                  MaGiamGia: "",
-                  ThoiGianBatDau: "",
-                  ThoiGianKetThuc: "",
-                  PhanTramGiamGia: "",
-                }
-              }
-              refreshData={() => fetchDataFacilities()}
+              entry={selectedFacilities}
+              refreshData={fetchDataFacilities}
             />
           )}
 
@@ -234,7 +277,7 @@ export default function Facilities(id: string) {
                 value={currentPage + 1}
                 onChange={(e) =>
                   setCurrentPage(
-                    Math.min(Number(e.target.value) - 1, totalPages)
+                    Math.min(Number(e.target.value) - 1, totalPages - 1)
                   )
                 }
                 className="w-10 text-center py-1 border rounded placeholder-gray-400"
