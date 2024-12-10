@@ -1,53 +1,41 @@
 "use client";
 import { useState, useEffect } from "react";
-import AmenitiesRoomDetail from "./openAmenitiesRoomDetail/amenitiesRoomDetail";
-import CreateAmenitiesRoom from "./createAmenitiesRoom/createAmenitiesRoom";
-export interface AmenitiesRoomProps {
-  ID: string;
-  Ten: string;
-  MoTa: string;
+import CreateGoodRoom from "./createGoodRoom/createGoodRoom";
+
+export interface GoodRoomProps {
+  MaDoTieuDung: string;
+  SoLuong: string;
+  MaPhong: string;
 }
 
-export default function AmenitiesRoom({
-  roomID,
-}: {
-  roomID: string | undefined;
-}) {
-  const [data, setData] = useState<AmenitiesRoomProps[]>([]);
+export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
+  const [data, setData] = useState<GoodRoomProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateAmenitiesRoom, setOpenCreateAmenitiesRoom] = useState(false);
-  const [openAmenitiesRoomDetail, setOpenAmenitiesRoomDetail] = useState(false);
-  const [selectedAmenitiesRoom, setSelectedAmenitiesRoom] = useState("");
+  const [openCreateGoodRoom, setOpenCreateGoodRoom] = useState(false);
+  const [openGoodRoomDetail, setOpenGoodRoomDetail] = useState(false);
+  const [selectedGoodRoom, setSelectedGoodRoom] =
+    useState<GoodRoomProps | null>(null);
   const [totalPages, setTotalPages] = useState(0);
-  const [idAmenities, setIdAmenities] = useState("");
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataAmenitiesRoom = async (
-    limit: number,
-    page: number,
-    name: string
-  ) => {
+  const fetchDataGoodRoom = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${APIURL}/amenities/rooms/all?limit=${limit}&page=${page}&name=${name}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("response", response);
+      const response = await fetch(`${APIURL}/rooms/${idRoom}/goods`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
       setData(result.data);
-      setTotalPages(Math.ceil(result.total / limit));
+      setTotalPages(Math.ceil(result.data.length / rowsPerPage));
       setIsLoading(false);
     } catch (error) {
       console.log("Failed to fetch data: ", error);
@@ -56,47 +44,29 @@ export default function AmenitiesRoom({
   };
 
   useEffect(() => {
-    fetchDataAmenitiesRoom(rowsPerPage, currentPage + 1, searchInput);
-  }, [rowsPerPage, currentPage, searchInput]);
+    fetchDataGoodRoom();
+  }, []);
 
-  const deleteDataAmenitiesRoom = async (id: string) => {
+  useEffect(() => {
+    setTotalPages(Math.ceil(data.length / rowsPerPage));
+  }, [data, rowsPerPage]);
+
+  const deleteDataGoodRoom = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/amenities/rooms/delete/${id}`, {
+      const response = await fetch(`${APIURL}/rooms/${idRoom}/goods/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted AmenitiesRoom: ", result);
-      fetchDataAmenitiesRoom(rowsPerPage, currentPage + 1, searchInput);
+      console.log("Deleted GoodRoom: ", result);
+      fetchDataGoodRoom();
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
   };
 
-  const addAmenitiesToRoom = async () => {
-    const requestBody = {
-      amenityId: idAmenities,
-    };
-    try {
-      const response = await fetch(`${APIURL}/amenities/add/${roomID}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      console.log("Deleted AmenitiesRoom: ", result);
-      fetchDataAmenitiesRoom(rowsPerPage, currentPage + 1, searchInput);
-    } catch (error) {
-      console.log("Failed to delete data: ", error);
-    }
-  };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     setCurrentPage(0);
@@ -107,10 +77,19 @@ export default function AmenitiesRoom({
     setCurrentPage(0);
   };
 
+  const filteredData = data.filter((amenity) =>
+    amenity.MaDoTieuDung.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  const paginatedData = filteredData.slice(
+    currentPage * rowsPerPage,
+    (currentPage + 1) * rowsPerPage
+  );
+
   return (
-    <div className="relative w-full  mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
+    <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý tiện ích phòng
+        Quản lý vật phẩm
       </h1>
 
       {isLoading ? (
@@ -127,7 +106,7 @@ export default function AmenitiesRoom({
             <input
               value={searchInput}
               onChange={handleSearch}
-              placeholder="Tìm kiếm theo ID"
+              placeholder="Tìm kiếm theo tên"
               className="p-2 border border-gray-300 rounded"
             />
             <select
@@ -140,14 +119,14 @@ export default function AmenitiesRoom({
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateAmenitiesRoom(true)}
+              onClick={() => setOpenCreateGoodRoom(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
-              Tạo mới
+              Thêm vật phẩm
             </button>
           </div>
 
-          {data.length === 0 ? (
+          {paginatedData.length === 0 ? (
             <div>
               <p>Không có dữ liệu</p>
             </div>
@@ -157,109 +136,53 @@ export default function AmenitiesRoom({
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      ID
+                      Mã đồ tiêu dùng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tên
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Mô tả
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Cập nhật
+                      Số lượng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Xóa
                     </th>
-                    {roomID != "" ? (
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Thêm
-                      </th>
-                    ) : null}
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((AmenitiesRoom) => (
-                    <tr key={AmenitiesRoom.ID}>
+                  {paginatedData.map((amenity) => (
+                    <tr key={amenity.MaDoTieuDung}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {AmenitiesRoom.ID}
+                        {amenity.MaDoTieuDung}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {AmenitiesRoom.Ten}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {AmenitiesRoom.MoTa}
-                      </td>
-
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        <button
-                          onClick={() => {
-                            setSelectedAmenitiesRoom(AmenitiesRoom.ID);
-                            setOpenAmenitiesRoomDetail(true);
-                          }}
-                          className="bg-blue-500 text-white px-2 py-1 rounded"
-                        >
-                          Cập nhật
-                        </button>
+                        {amenity.SoLuong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() =>
-                            deleteDataAmenitiesRoom(AmenitiesRoom.ID)
+                            deleteDataGoodRoom(amenity.MaDoTieuDung)
                           }
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
                         </button>
                       </td>
-                      {roomID != "" ? (
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                          <button
-                            onClick={() => {
-                              setIdAmenities(AmenitiesRoom.ID);
-                              addAmenitiesToRoom();
-                            }}
-                            className="bg-green-500 text-white px-2 py-1 rounded"
-                          >
-                            Thêm
-                          </button>
-                        </td>
-                      ) : null}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
-          {openCreateAmenitiesRoom && (
-            <CreateAmenitiesRoom
-              setIsCreate={setOpenCreateAmenitiesRoom}
-              fetchDataAmenitiesRoom={() =>
-                fetchDataAmenitiesRoom(
-                  rowsPerPage,
-                  currentPage + 1,
-                  searchInput
-                )
-              }
+          {openCreateGoodRoom && (
+            <CreateGoodRoom
+              setIsCreate={setOpenCreateGoodRoom}
+              fetchDataGoodRoom={fetchDataGoodRoom}
+              roomID={idRoom}
             />
           )}
-          {openAmenitiesRoomDetail && (
-            <AmenitiesRoomDetail
-              onClose={() => setOpenAmenitiesRoomDetail(false)}
-              entry={
-                data.find((item) => item.ID === selectedAmenitiesRoom) || {
-                  ID: "",
-                  Ten: "",
-                  MoTa: "",
-                }
-              }
-              refreshData={() =>
-                fetchDataAmenitiesRoom(
-                  rowsPerPage,
-                  currentPage + 1,
-                  searchInput
-                )
-              }
+          {openGoodRoomDetail && selectedGoodRoom && (
+            <GoodRoomDetail
+              onClose={() => setOpenGoodRoomDetail(false)}
+              entry={selectedGoodRoom}
+              refreshData={fetchDataGoodRoom}
             />
           )}
 
@@ -301,7 +224,7 @@ export default function AmenitiesRoom({
                 value={currentPage + 1}
                 onChange={(e) =>
                   setCurrentPage(
-                    Math.min(Number(e.target.value) - 1, totalPages)
+                    Math.min(Number(e.target.value) - 1, totalPages - 1)
                   )
                 }
                 className="w-10 text-center py-1 border rounded placeholder-gray-400"

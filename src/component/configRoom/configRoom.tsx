@@ -1,6 +1,8 @@
 import { useRouter } from "next/navigation";
 import Facilities from "./facilitiesOfRoom/facilities";
-import AmenitiesOfRoom from "./amenitiesRoom/amenitiesRoom";
+import AmenitiesOfRoom from "./amenitiesOfRoom/amenitiesRoom";
+import Record from "./recordOfRoom/record";
+import GoodOfRoom from "./goodOfRoom/goodRoom";
 interface ConfigRoomProps {
   id: string;
 }
@@ -18,7 +20,8 @@ export default function ConfigRoom(props: ConfigRoomProps) {
       </button>
       <Facilities idRoom={props.id} />
       <AmenitiesOfRoom idRoom={props.id} />
-
+      <Record idRoom={props.id} />
+      <GoodOfRoom idRoom={props.id} />
       <div className="grid gap-3"></div>
     </div>
   );

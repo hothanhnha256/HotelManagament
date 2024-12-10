@@ -1,60 +1,44 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import DeviceRoomsDetail from "./openDeviceRoomsDetail/deviceRoomsDetail";
-import CreateDeviceRooms from "./createDeviceRooms/createDeviceRooms";
+import { useState, useEffect } from "react";
+import CreateRecord from "./createRecord/createRecord";
 
-export interface DeviceRoomsProps {
-  ID: string;
-  TenSanPham: string;
-  SoLuong: number;
-  GiaNhapDonVi: string;
-  GiaBanDonVi: string;
+export interface RecordProps {
+  MaPhong: string;
+  ThoiGianTaoBanGhiPhong: string;
+  MaDatPhong: string;
+  IDBanBaoCao: string;
+  GiaTien: string;
 }
 
-export default function DeviceRooms({
-  roomID,
-}: {
-  roomID: string | undefined;
-}) {
-  const [data, setData] = useState<DeviceRoomsProps[]>([]);
+export default function Record({ idRoom }: { idRoom: string }) {
+  const [data, setData] = useState<RecordProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateDeviceRooms, setOpenCreateDeviceRooms] = useState(false);
-  const [openDeviceRoomsDetail, setOpenDeviceRoomsDetail] = useState(false);
-  const [selectedDeviceRooms, setSelectedDeviceRooms] = useState("");
+  const [openCreateRecord, setOpenCreateRecord] = useState(false);
+  const [openRecordDetail, setOpenRecordDetail] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<RecordProps | null>(
+    null
+  );
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const [goodIdAddToRoom, setGoodIdAddToRoom] = useState("");
-  const [quantityAddToRoom, setQuantityAddToRoom] = useState(0);
-
-  const [isAddDeviceToRoom, setIsAddDeviceToRoom] = useState(false);
-
-  const fetchDataDeviceRooms = async (
-    limit: number,
-    page: number,
-    searchId: string
-  ) => {
+  const fetchDataRecord = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${APIURL}/goods?limit=${limit}&page=${page}&search=${searchId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${APIURL}/rooms/${idRoom}/records`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
       setData(result.data);
-      setTotalPages(Math.ceil(result.total / limit));
+      setTotalPages(Math.ceil(result.data.length / rowsPerPage));
       setIsLoading(false);
     } catch (error) {
       console.log("Failed to fetch data: ", error);
@@ -63,46 +47,26 @@ export default function DeviceRooms({
   };
 
   useEffect(() => {
-    fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-  }, [rowsPerPage, currentPage, debouncedSearchInput]);
+    fetchDataRecord();
+  }, []);
 
-  const deleteDataDeviceRooms = async (id: string) => {
+  useEffect(() => {
+    setTotalPages(Math.ceil(data.length / rowsPerPage));
+  }, [data, rowsPerPage]);
+
+  const deleteDataRecord = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/goods/${id}`, {
+      const response = await fetch(`${APIURL}/rooms/${idRoom}/records/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted DeviceRooms: ", result);
-      fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
+      console.log("Deleted Record: ", result);
+      fetchDataRecord();
     } catch (error) {
       console.log("Failed to delete data: ", error);
-    }
-  };
-
-  const AddDeviceToRooms = async () => {
-    const requestBody = {
-      goodId: goodIdAddToRoom,
-      quantity: quantityAddToRoom,
-    };
-    try {
-      const response = await fetch(`${APIURL}/rooms/${roomID}/goods`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      console.log("Add DeviceRooms: ", result);
-      fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-    } catch (error) {
-      console.log("Failed to add data: ", error);
     }
   };
 
@@ -111,26 +75,24 @@ export default function DeviceRooms({
     setCurrentPage(0);
   };
 
-  // Debounce the search input
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchInput(searchInput);
-    }, 2000); // Adjust the delay as needed
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchInput]);
-
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
   };
 
+  const filteredData = data.filter((record) =>
+    record.MaPhong.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  const paginatedData = filteredData.slice(
+    currentPage * rowsPerPage,
+    (currentPage + 1) * rowsPerPage
+  );
+
   return (
-    <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
+    <div className=" w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý đồ dùng trong phòng
+        Quản lý bản ghi phòng
       </h1>
 
       {isLoading ? (
@@ -147,7 +109,7 @@ export default function DeviceRooms({
             <input
               value={searchInput}
               onChange={handleSearch}
-              placeholder="Tìm kiếm theo tên"
+              placeholder="Tìm kiếm theo mã phòng"
               className="p-2 border border-gray-300 rounded"
             />
             <select
@@ -160,14 +122,14 @@ export default function DeviceRooms({
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateDeviceRooms(true)}
+              onClick={() => setOpenCreateRecord(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
               Tạo mới
             </button>
           </div>
 
-          {data.length === 0 ? (
+          {paginatedData.length === 0 ? (
             <div>
               <p>Không có dữ liệu</p>
             </div>
@@ -177,19 +139,19 @@ export default function DeviceRooms({
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      ID
+                      Mã phòng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tên sản phẩm
+                      Thời gian tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Số lượng
+                      Mã đặt phòng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá nhập đơn vị
+                      ID bản báo cáo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá bán đơn vị
+                      Giá tiền
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -197,38 +159,31 @@ export default function DeviceRooms({
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Xóa
                     </th>
-                    {roomID !== "" ? (
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Thêm vào phòng
-                      </th>
-                    ) : (
-                      <></>
-                    )}
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {data.map((deviceRoom) => (
-                    <tr key={deviceRoom.ID}>
+                  {paginatedData.map((record) => (
+                    <tr key={record.MaPhong}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.ID}
+                        {record.MaPhong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.TenSanPham}
+                        {record.ThoiGianTaoBanGhiPhong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.SoLuong}
+                        {record.MaDatPhong}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaNhapDonVi}
+                        {record.IDBanBaoCao}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {deviceRoom.GiaBanDonVi}
+                        {record.GiaTien}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedDeviceRooms(deviceRoom.ID);
-                            setOpenDeviceRoomsDetail(true);
+                            setSelectedRecord(record);
+                            setOpenRecordDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -237,99 +192,23 @@ export default function DeviceRooms({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataDeviceRooms(deviceRoom.ID)}
+                          onClick={() => deleteDataRecord(record.MaPhong)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
                         </button>
                       </td>
-                      {roomID !== "" ? (
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                          <button
-                            onClick={() => {
-                              setGoodIdAddToRoom(deviceRoom.ID);
-                              setIsAddDeviceToRoom(true);
-                            }}
-                            className="bg-green-500 text-white px-2 py-1 rounded"
-                          >
-                            Thêm vào phòng
-                          </button>
-                        </td>
-                      ) : (
-                        <></>
-                      )}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
-          {openCreateDeviceRooms && (
-            <CreateDeviceRooms
-              setIsCreate={setOpenCreateDeviceRooms}
-              fetchDataDeviceRooms={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
-              }
-            />
-          )}
-          {isAddDeviceToRoom && (
-            <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white p-4 rounded-lg">
-                <h1 className="text-xl font-bold mb-4">Thêm vào phòng</h1>
-                <input
-                  type="number"
-                  value={quantityAddToRoom}
-                  onChange={(e) => setQuantityAddToRoom(Number(e.target.value))}
-                  placeholder="Nhập số lượng"
-                  className="p-2 border border-gray-300 rounded"
-                />
-                <div className="flex gap-2 mt-4">
-                  <button
-                    onClick={() => {
-                      setIsAddDeviceToRoom(false);
-                      setQuantityAddToRoom(0);
-                    }}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    onClick={() => {
-                      AddDeviceToRooms();
-                      setIsAddDeviceToRoom(false);
-                      setQuantityAddToRoom(0);
-                    }}
-                    className="bg-green-500 text-white px-2 py-1 rounded"
-                  >
-                    Thêm
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          {openDeviceRoomsDetail && (
-            <DeviceRoomsDetail
-              onClose={() => setOpenDeviceRoomsDetail(false)}
-              entry={
-                data.find((item) => item.ID === selectedDeviceRooms) || {
-                  ID: "",
-                  TenSanPham: "",
-                  SoLuong: 0,
-                  GiaNhapDonVi: "",
-                  GiaBanDonVi: "",
-                }
-              }
-              refreshData={() =>
-                fetchDataDeviceRooms(
-                  rowsPerPage,
-                  currentPage + 1,
-                  debouncedSearchInput
-                )
-              }
+          {openCreateRecord && (
+            <CreateRecord
+              idRoom={idRoom}
+              setIsCreate={setOpenCreateRecord}
+              fetchDataRecord={fetchDataRecord}
             />
           )}
 
@@ -371,7 +250,7 @@ export default function DeviceRooms({
                 value={currentPage + 1}
                 onChange={(e) =>
                   setCurrentPage(
-                    Math.min(Number(e.target.value) - 1, totalPages)
+                    Math.min(Number(e.target.value) - 1, totalPages - 1)
                   )
                 }
                 className="w-10 text-center py-1 border rounded placeholder-gray-400"
