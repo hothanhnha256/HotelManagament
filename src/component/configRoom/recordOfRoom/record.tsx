@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import CreateRecord from "./createRecord/createRecord";
-
+import GoodUseOfRoom from "./createRecord/goodUseOfRoom";
 export interface RecordProps {
   MaPhong: string;
   ThoiGianTaoBanGhiPhong: string;
@@ -121,12 +120,6 @@ export default function Record({ idRoom }: { idRoom: string }) {
               <option value={20}>20</option>
               <option value={50}>50</option>
             </select>
-            <button
-              onClick={() => setOpenCreateRecord(true)}
-              className="bg-blue-500 text-white px-2 py-1 rounded"
-            >
-              Tạo mới
-            </button>
           </div>
 
           {paginatedData.length === 0 ? (
@@ -154,10 +147,10 @@ export default function Record({ idRoom }: { idRoom: string }) {
                       Giá tiền
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Cập nhật
+                      Tạo bản báo cáo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Xóa
+                      Xem bản báo cáo
                     </th>
                   </tr>
                 </thead>
@@ -187,15 +180,18 @@ export default function Record({ idRoom }: { idRoom: string }) {
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
-                          Cập nhật
+                          Tạo
                         </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataRecord(record.MaPhong)}
-                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => {
+                            setSelectedRecord(record);
+                            setOpenRecordDetail(true);
+                          }}
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
-                          Xóa
+                          Xem
                         </button>
                       </td>
                     </tr>
@@ -203,13 +199,6 @@ export default function Record({ idRoom }: { idRoom: string }) {
                 </tbody>
               </table>
             </div>
-          )}
-          {openCreateRecord && (
-            <CreateRecord
-              idRoom={idRoom}
-              setIsCreate={setOpenCreateRecord}
-              fetchDataRecord={fetchDataRecord}
-            />
           )}
 
           <div className="pagination mt-4 flex items-center justify-center gap-2">

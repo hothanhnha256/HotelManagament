@@ -20,7 +20,7 @@ export default function ConfigRoom(props: ConfigRoomProps) {
       </button>
       <Facilities idRoom={props.id} />
       <AmenitiesOfRoom idRoom={props.id} />
-      <Record idRoom={props.id} />
+      {/* <Record idRoom={props.id} /> */}
       <GoodOfRoom idRoom={props.id} />
       <div className="grid gap-3"></div>
     </div>

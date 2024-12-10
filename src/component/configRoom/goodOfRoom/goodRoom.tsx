@@ -178,13 +178,6 @@ export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
               roomID={idRoom}
             />
           )}
-          {openGoodRoomDetail && selectedGoodRoom && (
-            <GoodRoomDetail
-              onClose={() => setOpenGoodRoomDetail(false)}
-              entry={selectedGoodRoom}
-              refreshData={fetchDataGoodRoom}
-            />
-          )}
 
           <div className="pagination mt-4 flex items-center justify-center gap-2">
             <button
