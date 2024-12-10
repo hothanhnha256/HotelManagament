@@ -8,7 +8,11 @@ export interface AmenitiesRoomProps {
   MoTa: string;
 }
 
-export default function AmenitiesRoom() {
+export default function AmenitiesRoom({
+  roomID,
+}: {
+  roomID: string | undefined;
+}) {
   const [data, setData] = useState<AmenitiesRoomProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
@@ -18,6 +22,7 @@ export default function AmenitiesRoom() {
   const [openAmenitiesRoomDetail, setOpenAmenitiesRoomDetail] = useState(false);
   const [selectedAmenitiesRoom, setSelectedAmenitiesRoom] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [idAmenities, setIdAmenities] = useState("");
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchDataAmenitiesRoom = async (
@@ -70,6 +75,28 @@ export default function AmenitiesRoom() {
     }
   };
 
+  const addAmenitiesToRoom = async () => {
+    const requestBody = {
+      amenityId: idAmenities,
+    };
+    try {
+      const response = await fetch(`${APIURL}/amenities/add/${roomID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Deleted AmenitiesRoom: ", result);
+      fetchDataAmenitiesRoom(rowsPerPage, currentPage + 1, searchInput);
+    } catch (error) {
+      console.log("Failed to delete data: ", error);
+    }
+  };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     setCurrentPage(0);
@@ -144,6 +171,11 @@ export default function AmenitiesRoom() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Xóa
                     </th>
+                    {roomID != "" ? (
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Thêm
+                      </th>
+                    ) : null}
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
@@ -180,6 +212,19 @@ export default function AmenitiesRoom() {
                           Xóa
                         </button>
                       </td>
+                      {roomID != "" ? (
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                          <button
+                            onClick={() => {
+                              setIdAmenities(AmenitiesRoom.ID);
+                              addAmenitiesToRoom();
+                            }}
+                            className="bg-green-500 text-white px-2 py-1 rounded"
+                          >
+                            Thêm
+                          </button>
+                        </td>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>

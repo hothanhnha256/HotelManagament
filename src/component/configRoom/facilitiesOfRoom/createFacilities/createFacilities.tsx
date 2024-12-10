@@ -134,8 +134,7 @@ export default function CreateFacilities({
             >
               <option value="">Chọn tình trạng</option>
               <option value="good">Tốt</option>
-              <option value="bad">Xấu</option>
-              <option value="normal">Bình thường</option>
+              <option value="maintenance">Bảo trì</option>
             </select>
           </div>
           <div className="mb-4">

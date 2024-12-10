@@ -22,7 +22,7 @@ export default function Amenities() {
           classNames="fade"
         >
           <div className="transition-opacity duration-500 ease-in-out">
-            {Room ? <AmenitiesRoom /> : <AmenitiesBranch />}
+            {Room ? <AmenitiesRoom roomID="" /> : <AmenitiesBranch />}
           </div>
         </CSSTransition>
       </TransitionGroup>

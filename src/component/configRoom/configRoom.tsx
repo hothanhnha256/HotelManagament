@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import Facilities from "./facilitiesOfRoom/facilities";
+import AmenitiesOfRoom from "./amenitiesRoom/amenitiesRoom";
 interface ConfigRoomProps {
   id: string;
 }
@@ -16,6 +17,7 @@ export default function ConfigRoom(props: ConfigRoomProps) {
         Back to Room List
       </button>
       <Facilities idRoom={props.id} />
+      <AmenitiesOfRoom idRoom={props.id} />
 
       <div className="grid gap-3"></div>
     </div>

@@ -1,36 +1,31 @@
 "use client";
 import { useState, useEffect } from "react";
-import FacilitiesDetail from "./openFacilitiesDetail/amenitiesDetail";
-import CreateFacilities from "./createFacilities/createFacilities";
+import AmenitiesRoomDetail from "./openAmenitiesRoomDetail/amenitiesRoomDetail";
+import CreateAmenitiesRoom from "./createAmenitiesRoom/createAmenitiesRoom";
 
-export interface FacilitiesProps {
+export interface AmenitiesRoomProps {
   ID: string;
-  TenTrangBi: string;
-  GiaMua: string;
-  MaSanPham: string;
-  TinhTrang: string;
-  MaPhong: string;
-  imageURL: string;
+  Ten: string;
+  MoTa: string;
 }
 
-export default function Facilities({ idRoom }: { idRoom: string }) {
-  const [data, setData] = useState<FacilitiesProps[]>([]);
+export default function AmenitiesOfRoom({ idRoom }: { idRoom: string }) {
+  const [data, setData] = useState<AmenitiesRoomProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [openCreateFacilities, setOpenCreateFacilities] = useState(false);
-  const [openFacilitiesDetail, setOpenFacilitiesDetail] = useState(false);
-  const [selectedFacilities, setSelectedFacilities] =
-    useState<FacilitiesProps | null>(null);
+  const [openCreateAmenitiesRoom, setOpenCreateAmenitiesRoom] = useState(false);
+  const [openAmenitiesRoomDetail, setOpenAmenitiesRoomDetail] = useState(false);
+  const [selectedAmenitiesRoom, setSelectedAmenitiesRoom] =
+    useState<AmenitiesRoomProps | null>(null);
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataFacilities = async () => {
+  const fetchDataAmenitiesRoom = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${APIURL}/facilities/${idRoom}`, {
+      const response = await fetch(`${APIURL}/amenities/${idRoom}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -50,24 +45,27 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
   };
 
   useEffect(() => {
-    fetchDataFacilities();
+    fetchDataAmenitiesRoom();
   }, []);
 
   useEffect(() => {
     setTotalPages(Math.ceil(data.length / rowsPerPage));
   }, [data, rowsPerPage]);
 
-  const deleteDataFacilities = async (id: string) => {
+  const deleteDataAmenitiesRoom = async (id: string) => {
     try {
-      const response = await fetch(`${APIURL}/facilities/${idRoom}/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${APIURL}/amenities/delete/${idRoom}/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted Facilities: ", result);
-      fetchDataFacilities();
+      console.log("Deleted AmenitiesRoom: ", result);
+      fetchDataAmenitiesRoom();
     } catch (error) {
       console.log("Failed to delete data: ", error);
     }
@@ -78,27 +76,14 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
     setCurrentPage(0);
   };
 
-  const handleStatusFilterChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setStatusFilter(e.target.value);
-    setCurrentPage(0);
-  };
-
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(0);
   };
 
-  const filteredData = data.filter((facility) => {
-    const matchesSearch = facility.TenTrangBi.toLowerCase().includes(
-      searchInput.toLowerCase()
-    );
-    const matchesStatus =
-      statusFilter === "all" ||
-      facility.TinhTrang.toLowerCase() === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredData = data.filter((amenity) =>
+    amenity.Ten.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   const paginatedData = filteredData.slice(
     currentPage * rowsPerPage,
@@ -108,7 +93,7 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg h-full">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        Quản lý tiện ích
+        Quản lý tiện nghi phòng
       </h1>
 
       {isLoading ? (
@@ -125,18 +110,9 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
             <input
               value={searchInput}
               onChange={handleSearch}
-              placeholder="Tìm kiếm theo ID"
+              placeholder="Tìm kiếm theo tên"
               className="p-2 border border-gray-300 rounded"
             />
-            <select
-              value={statusFilter}
-              onChange={handleStatusFilterChange}
-              className="p-2 border border-gray-300 rounded"
-            >
-              <option value="all">Tất cả</option>
-              <option value="good">Good</option>
-              <option value="maintenance">Maintenance</option>
-            </select>
             <select
               value={rowsPerPage}
               onChange={handleRowsPerPageChange}
@@ -147,10 +123,10 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
               <option value={50}>50</option>
             </select>
             <button
-              onClick={() => setOpenCreateFacilities(true)}
+              onClick={() => setOpenCreateAmenitiesRoom(true)}
               className="bg-blue-500 text-white px-2 py-1 rounded"
             >
-              Tạo mới
+              Thêm tiện nghi
             </button>
           </div>
 
@@ -170,10 +146,7 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
                       Tên
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Giá mua
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tình trạng
+                      Mô tả
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cập nhật
@@ -184,25 +157,22 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                  {paginatedData.map((facility) => (
-                    <tr key={facility.ID}>
+                  {paginatedData.map((amenity) => (
+                    <tr key={amenity.ID}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {facility.ID}
+                        {amenity.ID}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {facility.TenTrangBi}
+                        {amenity.Ten}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {facility.GiaMua}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {facility.TinhTrang}
+                        {amenity.MoTa}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
                           onClick={() => {
-                            setSelectedFacilities(facility);
-                            setOpenFacilitiesDetail(true);
+                            setSelectedAmenitiesRoom(amenity);
+                            setOpenAmenitiesRoomDetail(true);
                           }}
                           className="bg-blue-500 text-white px-2 py-1 rounded"
                         >
@@ -211,7 +181,7 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button
-                          onClick={() => deleteDataFacilities(facility.ID)}
+                          onClick={() => deleteDataAmenitiesRoom(amenity.ID)}
                           className="bg-red-500 text-white px-2 py-1 rounded"
                         >
                           Xóa
@@ -223,19 +193,18 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
               </table>
             </div>
           )}
-          {openCreateFacilities && (
-            <CreateFacilities
-              idRoom={idRoom}
-              setIsCreate={setOpenCreateFacilities}
-              fetchDataFacilities={fetchDataFacilities}
+          {openCreateAmenitiesRoom && (
+            <CreateAmenitiesRoom
+              setIsCreate={setOpenCreateAmenitiesRoom}
+              fetchDataAmenitiesRoom={fetchDataAmenitiesRoom}
+              roomID={idRoom}
             />
           )}
-          {openFacilitiesDetail && selectedFacilities && (
-            <FacilitiesDetail
-              idRoom={idRoom}
-              onClose={() => setOpenFacilitiesDetail(false)}
-              entry={selectedFacilities}
-              refreshData={fetchDataFacilities}
+          {openAmenitiesRoomDetail && selectedAmenitiesRoom && (
+            <AmenitiesRoomDetail
+              onClose={() => setOpenAmenitiesRoomDetail(false)}
+              entry={selectedAmenitiesRoom}
+              refreshData={fetchDataAmenitiesRoom}
             />
           )}
 
