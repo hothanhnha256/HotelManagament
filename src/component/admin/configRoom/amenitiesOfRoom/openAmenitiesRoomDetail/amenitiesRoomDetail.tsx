@@ -1,29 +1,29 @@
 import React, { useState } from "react";
-import { RecordProps } from "../record";
-
-export interface RecordRoomInterface {
-  entry: RecordProps;
+import { AmenitiesRoomProps } from "../amenitiesRoom";
+export interface AmenitiesRoomInterface {
+  entry: AmenitiesRoomProps;
   onClose: () => void;
   refreshData: () => void;
 }
 
-export interface UpdateRecordRoomDetail {
+export interface UpdateAmenitiesRoomDetail {
   ten: string;
   moTa: string;
 }
 
-export default function RecordRoomDetail(props: RecordRoomInterface) {
-  const [newRecordRoom, setNewRecordRoom] = useState<UpdateRecordRoomDetail>({
-    ten: props.entry.Ten,
-    moTa: props.entry.MoTa,
-  });
+export default function AmenitiesRoomDetail(props: AmenitiesRoomInterface) {
+  const [newAmenitiesRoom, setNewAmenitiesRoom] =
+    useState<UpdateAmenitiesRoomDetail>({
+      ten: props.entry.Ten,
+      moTa: props.entry.MoTa,
+    });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewRecordRoom((prev) => ({ ...prev, [name]: value }));
+    setNewAmenitiesRoom((prev) => ({ ...prev, [name]: value }));
   };
 
   const formatDateTime = (dateString: string) => {
@@ -44,8 +44,8 @@ export default function RecordRoomDetail(props: RecordRoomInterface) {
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("ten", newRecordRoom.ten);
-    formData.append("moTa", newRecordRoom.moTa);
+    formData.append("ten", newAmenitiesRoom.ten);
+    formData.append("moTa", newAmenitiesRoom.moTa);
 
     try {
       const response = await fetch(
@@ -62,12 +62,12 @@ export default function RecordRoomDetail(props: RecordRoomInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated RecordRoom: ", result);
+      console.log("Updated AmenitiesRoom: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update RecordRoom ", error);
-      setError("Failed to update RecordRoom. Please try again.");
+      console.log("Failed to update AmenitiesRoom ", error);
+      setError("Failed to update AmenitiesRoom. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +98,7 @@ export default function RecordRoomDetail(props: RecordRoomInterface) {
             <input
               type="text"
               name="ten"
-              value={newRecordRoom.ten}
+              value={newAmenitiesRoom.ten}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
@@ -109,7 +109,7 @@ export default function RecordRoomDetail(props: RecordRoomInterface) {
             <input
               type="text"
               name="moTa"
-              value={newRecordRoom.moTa}
+              value={newAmenitiesRoom.moTa}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required

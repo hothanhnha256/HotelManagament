@@ -1,4 +1,4 @@
-import PriceList from "@/component/priceList/priceList";
+import PriceList from "@/component/admin/priceList/priceList";
 export default function Page() {
   return <PriceList />;
 }

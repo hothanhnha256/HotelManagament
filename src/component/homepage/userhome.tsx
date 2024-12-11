@@ -19,21 +19,13 @@ export default function UserHomePage() {
           Access all your information, manage bookings, and explore our features
           designed just for you.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
+        <div className="grid grid-cols-1 gap-8 mt-6">
           <div className="p-6 bg-white/20 rounded-lg shadow-lg">
             <h3 className="text-2xl font-semibold mb-2 text-white">
               Manage Bookings
             </h3>
             <p className="text-sm text-white/80">
               View and manage your current and past bookings seamlessly.
-            </p>
-          </div>
-          <div className="p-6 bg-white/20 rounded-lg shadow-lg">
-            <h3 className="text-2xl font-semibold mb-2 text-white">
-              Profile Settings
-            </h3>
-            <p className="text-sm text-white/80">
-              Update your personal information and customize your preferences.
             </p>
           </div>
         </div>

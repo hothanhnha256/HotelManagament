@@ -1,30 +1,31 @@
 import { useState } from "react";
-import type { CreateGoodRoomDetail } from "./createGoodRoomInterface";
-import DeviceRooms from "@/component/deviceRoom/deviceRooms";
-interface CreateGoodRoomProps {
+import type { CreateAmenitiesRoomDetail } from "./createAmenitiesRoomInterface";
+import AmenitiesRoom from "@/component/admin/amenities/amenitiesRoom/amenitiesRoom";
+interface CreateAmenitiesRoomProps {
   setIsCreate: (isCreate: boolean) => void;
-  fetchDataGoodRoom: () => void;
+  fetchDataAmenitiesRoom: () => void;
   roomID: string;
 }
 
-export default function CreateGoodRoom({
+export default function CreateAmenitiesRoom({
   setIsCreate,
-  fetchDataGoodRoom,
+  fetchDataAmenitiesRoom,
   roomID,
-}: CreateGoodRoomProps) {
-  const [newGoodRoom, setNewGoodRoom] = useState<CreateGoodRoomDetail>({
-    ten: "",
-    moTa: "",
-  });
+}: CreateAmenitiesRoomProps) {
+  const [newAmenitiesRoom, setNewAmenitiesRoom] =
+    useState<CreateAmenitiesRoomDetail>({
+      ten: "",
+      moTa: "",
+    });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewGoodRoom((prev) => ({ ...prev, [name]: value }));
+    setNewAmenitiesRoom((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateInputs = () => {
-    if (!newGoodRoom.ten) {
+    if (!newAmenitiesRoom.ten) {
       setError("Tên không được để trống.");
       return false;
     }
@@ -39,11 +40,11 @@ export default function CreateGoodRoom({
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("ten", newGoodRoom.ten);
-    formData.append("moTa", newGoodRoom.moTa);
+    formData.append("ten", newAmenitiesRoom.ten);
+    formData.append("moTa", newAmenitiesRoom.moTa);
 
     try {
-      const response = await fetch(`${APIURL}/Good/rooms`, {
+      const response = await fetch(`${APIURL}/amenities/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -54,17 +55,17 @@ export default function CreateGoodRoom({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new GoodRoom: ", result);
-      fetchDataGoodRoom();
+      console.log("Create new AmenitiesRoom: ", result);
+      fetchDataAmenitiesRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create GoodRoom ", error);
-      setError("Failed to create GoodRoom. Please try again.");
+      console.log("Failed to create AmenitiesRoom ", error);
+      setError("Failed to create AmenitiesRoom. Please try again.");
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full ">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black dark:text-white">
@@ -72,7 +73,7 @@ export default function CreateGoodRoom({
           </h2>
           <button
             onClick={() => {
-              fetchDataGoodRoom();
+              fetchDataAmenitiesRoom();
               setIsCreate(false);
             }}
             className="ml-4 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-black dark:text-white font-semibold py-1 px-2 border border-gray-300 dark:border-gray-600 rounded"
@@ -80,7 +81,7 @@ export default function CreateGoodRoom({
             X
           </button>
         </div>
-        <DeviceRooms roomID={roomID} />
+        <AmenitiesRoom roomID={roomID} />
       </div>
     </div>
   );

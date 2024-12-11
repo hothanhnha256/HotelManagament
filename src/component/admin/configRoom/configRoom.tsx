@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import Facilities from "./facilitiesOfRoom/facilities";
 import AmenitiesOfRoom from "./amenitiesOfRoom/amenitiesRoom";
-import Record from "./recordOfRoom/record";
+import Record from "../orderRoomManagement/recordOfRoom/record";
 import GoodOfRoom from "./goodOfRoom/goodRoom";
 import PriceOfRoom from "./priceOfRoom/priceOfRoom";
 interface ConfigRoomProps {

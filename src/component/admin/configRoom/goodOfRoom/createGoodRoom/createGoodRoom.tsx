@@ -1,31 +1,30 @@
 import { useState } from "react";
-import type { CreateAmenitiesRoomDetail } from "./createAmenitiesRoomInterface";
-import AmenitiesRoom from "@/component/amenities/amenitiesRoom/amenitiesRoom";
-interface CreateAmenitiesRoomProps {
+import type { CreateGoodRoomDetail } from "./createGoodRoomInterface";
+import DeviceRooms from "@/component/admin/deviceRoom/deviceRooms";
+interface CreateGoodRoomProps {
   setIsCreate: (isCreate: boolean) => void;
-  fetchDataAmenitiesRoom: () => void;
+  fetchDataGoodRoom: () => void;
   roomID: string;
 }
 
-export default function CreateAmenitiesRoom({
+export default function CreateGoodRoom({
   setIsCreate,
-  fetchDataAmenitiesRoom,
+  fetchDataGoodRoom,
   roomID,
-}: CreateAmenitiesRoomProps) {
-  const [newAmenitiesRoom, setNewAmenitiesRoom] =
-    useState<CreateAmenitiesRoomDetail>({
-      ten: "",
-      moTa: "",
-    });
+}: CreateGoodRoomProps) {
+  const [newGoodRoom, setNewGoodRoom] = useState<CreateGoodRoomDetail>({
+    ten: "",
+    moTa: "",
+  });
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewAmenitiesRoom((prev) => ({ ...prev, [name]: value }));
+    setNewGoodRoom((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateInputs = () => {
-    if (!newAmenitiesRoom.ten) {
+    if (!newGoodRoom.ten) {
       setError("Tên không được để trống.");
       return false;
     }
@@ -40,11 +39,11 @@ export default function CreateAmenitiesRoom({
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
-    formData.append("ten", newAmenitiesRoom.ten);
-    formData.append("moTa", newAmenitiesRoom.moTa);
+    formData.append("ten", newGoodRoom.ten);
+    formData.append("moTa", newGoodRoom.moTa);
 
     try {
-      const response = await fetch(`${APIURL}/amenities/rooms`, {
+      const response = await fetch(`${APIURL}/Good/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -55,12 +54,12 @@ export default function CreateAmenitiesRoom({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new AmenitiesRoom: ", result);
-      fetchDataAmenitiesRoom();
+      console.log("Create new GoodRoom: ", result);
+      fetchDataGoodRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create AmenitiesRoom ", error);
-      setError("Failed to create AmenitiesRoom. Please try again.");
+      console.log("Failed to create GoodRoom ", error);
+      setError("Failed to create GoodRoom. Please try again.");
     }
   };
 
@@ -73,7 +72,7 @@ export default function CreateAmenitiesRoom({
           </h2>
           <button
             onClick={() => {
-              fetchDataAmenitiesRoom();
+              fetchDataGoodRoom();
               setIsCreate(false);
             }}
             className="ml-4 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-black dark:text-white font-semibold py-1 px-2 border border-gray-300 dark:border-gray-600 rounded"
@@ -81,7 +80,7 @@ export default function CreateAmenitiesRoom({
             X
           </button>
         </div>
-        <AmenitiesRoom roomID={roomID} />
+        <DeviceRooms roomID={roomID} />
       </div>
     </div>
   );

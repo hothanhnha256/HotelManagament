@@ -1,6 +1,6 @@
 "use client";
 
-import DetailRoom from "@/component/detailOrderRoom/detailOrderRoom";
+import DetailRoom from "@/component/admin/detailOrderRoom/detailOrderRoom";
 
 export default function Page({
   params,

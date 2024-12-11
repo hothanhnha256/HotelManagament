@@ -50,46 +50,35 @@ export default function UserSidebar() {
           <ul className="space-y-4 text-lg font-semibold">
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/admin/homepage"
+                pathname === "/user"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/admin/homepage" legacyBehavior>
+              <Link href="/user" legacyBehavior>
                 <a className="w-full">Trang chủ</a>
               </Link>
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/room"
+                pathname === "/user/booking"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/room" legacyBehavior>
+              <Link href="/user/booking" legacyBehavior>
                 <a className="w-full">Đặt phòng</a>
               </Link>
             </li>
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/facilities"
+                pathname === "/user/history"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/facilities" legacyBehavior>
+              <Link href="/user/history" legacyBehavior>
                 <a className="w-full">Lịch sử đặt phòng</a>
-              </Link>
-            </li>
-            <li
-              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/orderRoom"
-                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
-                  : ""
-              } flex items-center`}
-            >
-              <Link href="/orderRoom" legacyBehavior>
-                <a className="w-full">Thông tin của tôi</a>
               </Link>
             </li>
             <li

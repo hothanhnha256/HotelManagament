@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { configProps } from "./interface/configProps";
 import { formatDate } from "./allPermittedType";
 import { fileType } from "./enums";
-import Notification from "../ui/notification";
+import Notification from "../../ui/notification";
 
 export interface datafetch {
   defaultNoPages: number;

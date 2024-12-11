@@ -1,4 +1,4 @@
-import AllPermittedType from "@/component/systemConfig/allPermittedType";
+import AllPermittedType from "@/component/admin/systemConfig/allPermittedType";
 export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8 place-content-center items-center bg-white shadow-md h-screen">
