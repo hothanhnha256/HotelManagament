@@ -104,17 +104,17 @@ export default function Sidebar() {
                 <a className="w-full">Dịch vụ phòng</a>
               </Link>
             </li>
-            {/* <li
+            <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/admin/priceList"
+                pathname === "/admin/orderRoomManagement"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/admin/priceList" legacyBehavior>
-                <a className="w-full">Bảng giá</a>
+              <Link href="/admin/orderRoomManagement" legacyBehavior>
+                <a className="w-full">Quản lý đặt phòng</a>
               </Link>
-            </li> */}
+            </li>
             {/* <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/admin/bill"

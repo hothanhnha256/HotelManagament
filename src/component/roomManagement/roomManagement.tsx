@@ -4,6 +4,15 @@ import { useState, useEffect, useMemo } from "react";
 import { dataRoom } from "./interface/roomInterface";
 import CreateRoom from "./createRoom";
 import RoomDetail from "./openRoomDetail/RoomDetail";
+
+interface AdjustPriceRoomProps {
+  month: string;
+  year: string;
+  normalRoomMinPrice: string;
+  normalRoomPublicPrice: string;
+  vipRoomMinPrice: string;
+  vipRoomPublicPrice: string;
+}
 export default function RoomManagement() {
   const [data, setData] = useState<dataRoom[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -12,10 +21,26 @@ export default function RoomManagement() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isCreate, setIsCreate] = useState(false);
+  const [isAdjustPrice, setIsAdjustPrice] = useState(false);
+  const [isDeletePrice, setIsDeletePrice] = useState(false);
   const [error, setError] = useState<string>("");
   const [totalPages, setTotalPages] = useState(0);
   const [roomDetail, setRoomDetail] = useState<dataRoom | null>(null);
   const [isRoomDetailOpen, setIsRoomDetailOpen] = useState(false);
+
+  const [adjustPriceData, setAdjustPriceData] = useState<AdjustPriceRoomProps>({
+    month: "",
+    year: "",
+    normalRoomMinPrice: "",
+    normalRoomPublicPrice: "",
+    vipRoomMinPrice: "",
+    vipRoomPublicPrice: "",
+  });
+
+  const [deletePriceData, setDeletePriceData] = useState({
+    month: "",
+    year: "",
+  });
 
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -57,6 +82,66 @@ export default function RoomManagement() {
     }
   };
 
+  const adjustPriceRoom = async () => {
+    console.log("Adjust price data: ", adjustPriceData);
+    console.log(
+      new URLSearchParams({
+        month: adjustPriceData.month,
+        year: adjustPriceData.year,
+        normalRoomMinPrice: adjustPriceData.normalRoomMinPrice,
+        normalRoomPublicPrice: adjustPriceData.normalRoomPublicPrice,
+        vipRoomMinPrice: adjustPriceData.vipRoomMinPrice,
+        vipRoomPublicPrice: adjustPriceData.vipRoomPublicPrice,
+      }).toString()
+    );
+    try {
+      const response = await fetch(`${APIURL}/rooms/price/all`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          month: adjustPriceData.month,
+          year: adjustPriceData.year,
+          normalRoomMinPrice: adjustPriceData.normalRoomMinPrice,
+          normalRoomPublicPrice: adjustPriceData.normalRoomPublicPrice,
+          vipRoomMinPrice: adjustPriceData.vipRoomMinPrice,
+          vipRoomPublicPrice: adjustPriceData.vipRoomPublicPrice,
+        }).toString(),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Adjusted price: ", result);
+      alert("Điều chỉnh giá phòng thành công");
+      setIsAdjustPrice(false);
+    } catch (error) {
+      console.log("Failed to adjust price: ", error);
+    }
+  };
+
+  const deletePriceRoom = async () => {
+    try {
+      const response = await fetch(
+        `${APIURL}/rooms/price/all?month=${deletePriceData.month}&year=${deletePriceData.year}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Deleted price: ", result);
+      alert("Xoá giá phòng thành công");
+      setIsDeletePrice(false);
+    } catch (error) {}
+  };
+
   useEffect(() => {
     fetchDataRoom(
       rowsPerPage,
@@ -96,6 +181,16 @@ export default function RoomManagement() {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+  const handleAdjustPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAdjustPriceData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDeletePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDeletePriceData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -157,6 +252,12 @@ export default function RoomManagement() {
             >
               Tạo mới
             </button>
+            <button
+              className="p-2 bg-blue-500 text-white rounded"
+              onClick={() => setIsAdjustPrice(true)}
+            >
+              Điều chỉnh giá phòng
+            </button>
           </div>
           {isCreate && (
             <CreateRoom
@@ -172,6 +273,151 @@ export default function RoomManagement() {
               }
             />
           )}
+          {isAdjustPrice && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">
+                  Điều chỉnh giá phòng
+                </h2>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Tháng</label>
+                  <input
+                    type="text"
+                    name="month"
+                    value={adjustPriceData.month}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Năm</label>
+                  <input
+                    type="text"
+                    name="year"
+                    value={adjustPriceData.year}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">
+                    Giá phòng thường
+                  </label>
+                  <input
+                    type="text"
+                    name="normalRoomMinPrice"
+                    value={adjustPriceData.normalRoomMinPrice}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Giá phòng VIP</label>
+                  <input
+                    type="text"
+                    name="vipRoomMinPrice"
+                    value={adjustPriceData.vipRoomMinPrice}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">
+                    Giá phòng thường (giá công khai)
+                  </label>
+                  <input
+                    type="text"
+                    name="normalRoomPublicPrice"
+                    value={adjustPriceData.normalRoomPublicPrice}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">
+                    Giá phòng VIP (giá công khai)
+                  </label>
+                  <input
+                    type="text"
+                    name="vipRoomPublicPrice"
+                    value={adjustPriceData.vipRoomPublicPrice}
+                    onChange={handleAdjustPriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="flex w-full place-content-center gap-3">
+                  <button
+                    className="p-2 bg-blue-500 text-white rounded w-32"
+                    onClick={adjustPriceRoom}
+                  >
+                    Điều chỉnh
+                  </button>
+                  <button
+                    className="p-2 bg-gray-500 text-white rounded w-32"
+                    onClick={() => setIsAdjustPrice(false)}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    className="p-2 bg-red-500 text-white rounded w-32"
+                    onClick={() => setIsDeletePrice(true)}
+                  >
+                    Xoá
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {isDeletePrice && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Xoá giá phòng</h2>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Tháng</label>
+                  <input
+                    type="text"
+                    name="month"
+                    value={deletePriceData.month}
+                    onChange={handleDeletePriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Năm</label>
+                  <input
+                    type="text"
+                    name="year"
+                    value={deletePriceData.year}
+                    onChange={handleDeletePriceChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    required
+                  />
+                </div>
+                <div className="flex w-full place-content-center gap-3">
+                  <button
+                    className="p-2 bg-red-500 text-white rounded w-32"
+                    onClick={deletePriceRoom}
+                  >
+                    Xoá
+                  </button>
+                  <button
+                    className="p-2 bg-gray-500 text-white rounded w-32"
+                    onClick={() => setIsDeletePrice(false)}
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50 dark:bg-gray-700">
