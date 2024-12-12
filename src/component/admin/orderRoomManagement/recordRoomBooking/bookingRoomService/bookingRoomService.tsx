@@ -87,6 +87,7 @@ export default function BookingRoomService(
         {
           method: "GET",
           headers: {
+            "ngrok-skip-browser-warning": "true",
             "Content-Type": "application/json",
           },
         }
@@ -111,6 +112,7 @@ export default function BookingRoomService(
         {
           method: "DELETE",
           headers: {
+            "ngrok-skip-browser-warning": "true",
             "Content-Type": "application/json",
           },
         }
@@ -153,6 +155,7 @@ export default function BookingRoomService(
       const response = await fetch(`${APIURL}/booking/room-service/${MaDon}`, {
         method: "PATCH",
         headers: {
+          "ngrok-skip-browser-warning": "true",
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: requestBody.toString(),
@@ -188,6 +191,7 @@ export default function BookingRoomService(
       const response = await fetch(`${APIURL}/booking/room-service/${MaDon}`, {
         method: "PATCH",
         headers: {
+          "ngrok-skip-browser-warning": "true",
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: requestBody.toString(),
@@ -226,6 +230,7 @@ export default function BookingRoomService(
         {
           method: "POST",
           headers: {
+            "ngrok-skip-browser-warning": "true",
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body: requestBody.toString(),

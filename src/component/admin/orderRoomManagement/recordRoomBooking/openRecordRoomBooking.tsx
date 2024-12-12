@@ -54,7 +54,7 @@ export default function OpenRecordRoomBooking(props: DataBookingRoomProps) {
                   )}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-2 place-content-center ">
+              <div className="grid grid-cols-3 gap-2 place-content-center ">
                 <button
                   className="
                   px-4 py-2 bg-blue-500 text-white rounded mr-4
@@ -88,12 +88,6 @@ export default function OpenRecordRoomBooking(props: DataBookingRoomProps) {
                   px-4 py-2 bg-yellow-500 text-white rounded mr-4"
                 >
                   Xem báo cáo
-                </button>
-                <button
-                  className="
-                  px-4 py-2 bg-violet-500 text-white rounded mr-4"
-                >
-                  Checkout
                 </button>
               </div>
             </div>

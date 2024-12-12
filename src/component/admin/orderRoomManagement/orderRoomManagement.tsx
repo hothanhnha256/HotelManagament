@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import OpenRecordRoomBooking from "./recordRoomBooking/openRecordRoomBooking";
+import CheckoutRoom from "./recordRoomBooking/checkout/openCheckout";
 export interface DataOrder {
   MaDon: string;
   IDLeTan: string;
@@ -29,6 +30,9 @@ export interface DataRecordRoom {
 }
 
 export default function OrderRoomManagement() {
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [orderIdCheckout, setOrderIdCheckout] = useState("");
+
   const [data, setData] = useState<DataRecordRoom[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
@@ -55,6 +59,7 @@ export default function OrderRoomManagement() {
         {
           method: "GET",
           headers: {
+            "ngrok-skip-browser-warning": "true",
             "Content-Type": "application/json",
           },
         }
@@ -169,6 +174,9 @@ export default function OrderRoomManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Xem chi tiết
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Checkout
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
@@ -212,6 +220,17 @@ export default function OrderRoomManagement() {
                         Xem
                       </button>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <button
+                        onClick={() => {
+                          setIsCheckout(true);
+                          setOrderIdCheckout(row.order.MaDon);
+                        }}
+                        className="bg-green-500 text-white px-2 py-1 rounded"
+                      >
+                        Checkout
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -221,6 +240,12 @@ export default function OrderRoomManagement() {
             <OpenRecordRoomBooking
               dataBookingRoom={orderRoomDetail}
               onClose={() => setIsOrderRoomDetailOpen(false)}
+            />
+          )}
+          {isCheckout && (
+            <CheckoutRoom
+              onClose={() => setIsCheckout(false)}
+              orderId={orderIdCheckout}
             />
           )}
 

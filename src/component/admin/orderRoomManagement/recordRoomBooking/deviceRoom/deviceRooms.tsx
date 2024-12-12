@@ -2,12 +2,8 @@
 import { useState, useEffect } from "react";
 
 export interface DeviceRoomsProps {
-  ID: string;
-  TenSanPham: string;
-  SoLuong: number;
-  GiaNhapDonVi: string;
-  GiaBanDonVi: string;
-  quantity: number;
+  SoLuong: string;
+  MaDoTieuDung: string;
 }
 export interface DeviceRoomServiceInterface {
   onClose: () => void;
@@ -26,32 +22,24 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
   const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
   const [reportProps, setReportProps] = useState<ReportProps[]>([]);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchDataDeviceRooms = async (
-    limit: number,
-    page: number,
-    searchId: string
-  ) => {
+  const fetchDataDeviceRooms = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${APIURL}/goods?limit=${limit}&page=${page}&search=${searchId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${APIURL}/rooms/${props.roomId}/goods`, {
+        method: "GET",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
       setData(result.data);
-      setTotalPages(Math.ceil(result.total / limit));
       setIsLoading(false);
     } catch (error) {
       console.log("Failed to fetch data: ", error);
@@ -76,6 +64,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
         {
           method: "POST",
           headers: {
+            "ngrok-skip-browser-warning": "true",
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body: requestBody.toString(),
@@ -84,6 +73,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       if (!response.ok) {
         console.error("Failed to create report: ", response.status);
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        return;
       }
       const result = await response.json();
       alert("Báo cáo đã được tạo thành công");
@@ -93,15 +83,9 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
   };
 
   useEffect(() => {
-    fetchDataDeviceRooms(rowsPerPage, currentPage + 1, debouncedSearchInput);
-  }, [rowsPerPage, currentPage, debouncedSearchInput]);
+    fetchDataDeviceRooms();
+  }, []);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-    setCurrentPage(0);
-  };
-
-  // Debounce the search input
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchInput(searchInput);
@@ -111,6 +95,11 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       clearTimeout(handler);
     };
   }, [searchInput]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    setCurrentPage(0);
+  };
 
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
@@ -129,6 +118,17 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       }
     });
   };
+
+  const filteredData = data.filter((item) =>
+    item.MaDoTieuDung.toLowerCase().includes(debouncedSearchInput.toLowerCase())
+  );
+
+  const paginatedData = filteredData.slice(
+    currentPage * rowsPerPage,
+    (currentPage + 1) * rowsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
@@ -172,7 +172,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
               </select>
             </div>
 
-            {data?.length === 0 ? (
+            {filteredData.length === 0 ? (
               <div>
                 <p>Không có dữ liệu</p>
               </div>
@@ -182,16 +182,10 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
                   <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Tên sản phẩm
+                        Mã đồ tiêu dùng
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Số lượng
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Giá nhập đơn vị
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Giá bán đơn vị
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Số lượng sử dụng
@@ -199,31 +193,26 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                    {data?.map((deviceRoom) => (
-                      <tr key={deviceRoom.ID}>
+                    {paginatedData.map((deviceRoom) => (
+                      <tr key={deviceRoom.MaDoTieuDung}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                          {deviceRoom.TenSanPham}
+                          {deviceRoom.MaDoTieuDung}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                           {deviceRoom.SoLuong}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                          {deviceRoom.GiaNhapDonVi}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                          {deviceRoom.GiaBanDonVi}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                           <input
                             type="number"
                             value={
                               reportProps.find(
-                                (item) => item.goodId === deviceRoom.ID
+                                (item) =>
+                                  item.goodId === deviceRoom.MaDoTieuDung
                               )?.quantity || 0
                             }
                             onChange={(e) =>
                               handleQuantityChange(
-                                deviceRoom.ID,
+                                deviceRoom.MaDoTieuDung,
                                 Number(e.target.value)
                               )
                             }
