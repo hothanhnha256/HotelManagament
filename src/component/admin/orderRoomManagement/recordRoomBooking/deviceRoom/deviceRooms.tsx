@@ -48,11 +48,6 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
   };
 
   const handleCreateReport = async () => {
-    if (!reportProps || reportProps.length === 0) {
-      alert("Vui lòng nhập số lượng sử dụng cho ít nhất một sản phẩm.");
-      return;
-    }
-
     const requestBody = new URLSearchParams();
     requestBody.append("goods", JSON.stringify(reportProps));
 
@@ -70,12 +65,14 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
           body: requestBody.toString(),
         }
       );
+
+      const result = await response.json();
+      console.log("Result: ", result);
       if (!response.ok) {
         console.error("Failed to create report: ", response.status);
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+        alert("Failed to create report: " + result.error);
         return;
       }
-      const result = await response.json();
       alert("Báo cáo đã được tạo thành công");
     } catch (error) {
       console.log("Failed to create report: ", error);

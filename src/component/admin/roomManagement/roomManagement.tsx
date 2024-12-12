@@ -62,6 +62,8 @@ export default function RoomManagement() {
         {
           method: "GET",
           headers: {
+            "ngrok-skip-browser-warning": "true",
+
             "Content-Type": "application/json",
           },
         }
@@ -150,6 +152,7 @@ export default function RoomManagement() {
       filterTinhTrang,
       filterLoaiPhong
     );
+    fetchDiscount();
   }, [
     rowsPerPage,
     currentPage,
@@ -191,6 +194,70 @@ export default function RoomManagement() {
   const handleDeletePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setDeletePriceData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  //For APPLY DISCOUNT
+  const [discountData, setDiscountData] = useState<
+    | [
+        {
+          MaGiamGia: string;
+          ThoiGianBatDau: string;
+          ThoiGianKetThuc: string;
+          PhanTramGiamGia: string;
+        }
+      ]
+    | []
+  >([]);
+
+  const [discountId, setDiscountId] = useState("");
+
+  const fetchDiscount = async () => {
+    try {
+      const response = await fetch(`${APIURL}/discounts/all?limit=10&page=1`, {
+        method: "GET",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      setDiscountData(result.data);
+      console.log("Discount data: ", discountData);
+      console.log("Discount data: ", result.data);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  };
+
+  const [roomToApplyDiscount, setRoomToApplyDiscount] = useState("");
+
+  const handleApplyDiscount = async () => {
+    try {
+      const response = await fetch(
+        `${APIURL}/rooms/${roomToApplyDiscount}/discount`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            discountId: discountId,
+          }).toString(),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log(result);
+      alert("Áp dụng mã giảm giá thành công");
+    } catch (error) {
+      console.log("Failed to apply discount: ", error);
+      alert("Failed to apply discount");
+    }
   };
 
   return (
@@ -440,6 +507,9 @@ export default function RoomManagement() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Xem chi tiết
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Áp dụng giảm giá
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
@@ -471,6 +541,29 @@ export default function RoomManagement() {
 
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       <a href={`room/${row.MaPhong}`}>Xem</a>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                      <select
+                        value={discountId}
+                        onChange={(e) => setDiscountId(e.target.value)}
+                        className="p-2 border border-gray-300 rounded"
+                      >
+                        <option value="">Chọn mã giảm giá</option>
+                        {discountData.map((discount) => (
+                          <option value={discount.MaGiamGia}>
+                            {discount.MaGiamGia}: {discount.PhanTramGiamGia}%
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => {
+                          setRoomToApplyDiscount(row.MaPhong);
+                          handleApplyDiscount();
+                        }}
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                      >
+                        Áp dụng
+                      </button>
                     </td>
                   </tr>
                 ))}

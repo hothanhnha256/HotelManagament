@@ -40,6 +40,34 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
     fetchCheckoutReport();
   }, []);
 
+  //FOR ACCEPT CHECKOUT
+  const checkoutRoom = async () => {
+    try {
+      const response = await fetch(
+        `${APIURL}/booking/${props.orderId}/checkout`,
+        {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+      const result = await response.json();
+      console.log(result);
+      if (!response.ok) {
+        alert(result.message);
+        return;
+      }
+      console.log(result);
+      alert("Checkout successfully");
+    } catch (error) {
+      console.log("Failed to checkout ", error);
+      alert("Failed to checkout");
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
       <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-4xl h-5/6 overflow-y-auto">
@@ -52,7 +80,7 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
           </button>
         </div>
         <h1 className="text-2xl font-bold mb-6 text-black dark:text-white text-center">
-          Báo cáo Checkout
+          Thông tin phòng
         </h1>
 
         {isLoading ? (
@@ -88,7 +116,7 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-300">
                   Báo cáo
                 </h2>
-                {data.reports.report.map((report: any) => (
+                {data.reports?.report?.map((report: any) => (
                   <div
                     key={report.ID}
                     className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg bg-white dark:bg-gray-900 mb-4"
@@ -166,6 +194,15 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
             </div>
           )
         )}
+
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={checkoutRoom}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
+          >
+            Xác nhận thanh toán
+          </button>
+        </div>
       </div>
     </div>
   );

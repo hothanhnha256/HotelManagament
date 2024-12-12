@@ -2,6 +2,7 @@ import { DataBookingRoom } from "../orderRoomManagement";
 import { format } from "date-fns";
 import BookingRoomService from "./bookingRoomService/bookingRoomService";
 import { BookingRoomServiceInterface } from "./bookingRoomService/bookingRoomService";
+import OpenSeeReport from "./seeReport/openSeeReport";
 import { useState } from "react";
 import DeviceUseInRooms from "./deviceRoom/deviceRooms";
 export interface DataBookingRoomProps {
@@ -15,6 +16,8 @@ export default function OpenRecordRoomBooking(props: DataBookingRoomProps) {
   }>({ createdAt: "", roomId: "" });
   const [isCreateReport, setIsCreateReport] = useState(false);
   const [isBookingRoomService, setIsBookingRoomService] = useState(false);
+  const [isSeeReport, setIsSeeReport] = useState(false);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 ">
       <div className="relative bg-white p-6 rounded-lg shadow-lg w-full h-5/6">
@@ -86,6 +89,13 @@ export default function OpenRecordRoomBooking(props: DataBookingRoomProps) {
                 <button
                   className="
                   px-4 py-2 bg-yellow-500 text-white rounded mr-4"
+                  onClick={() => {
+                    setOpen({
+                      createdAt: item.ThoiGianTaoBanGhiPhong,
+                      roomId: item.MaPhong,
+                    });
+                    setIsSeeReport(true);
+                  }}
                 >
                   Xem báo cáo
                 </button>
@@ -102,6 +112,13 @@ export default function OpenRecordRoomBooking(props: DataBookingRoomProps) {
           {isCreateReport && (
             <DeviceUseInRooms
               onClose={() => setIsCreateReport(false)}
+              createdAt={open.createdAt}
+              roomId={open.roomId}
+            />
+          )}
+          {isSeeReport && (
+            <OpenSeeReport
+              onClose={() => setIsSeeReport(false)}
               createdAt={open.createdAt}
               roomId={open.roomId}
             />

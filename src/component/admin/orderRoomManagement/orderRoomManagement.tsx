@@ -107,6 +107,34 @@ export default function OrderRoomManagement() {
     setCurrentPage(newPage);
   };
 
+  //for approve or cancel booking
+  const [action, setAction] = useState("");
+
+  const handleApproveBooking = async (orderId: string) => {
+    console.log("Order ID: ", orderId);
+    console.log("Action: ", action);
+    console.log("API URL: ", `${APIURL}/booking/${orderId}`);
+    try {
+      const response = await fetch(`${APIURL}/booking/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: new URLSearchParams({
+          action: action,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Result: ", result);
+      alert(action + " booking successfully!");
+      fetchDataOrderRoom(rowsPerPage, currentPage + 1);
+    } catch (error) {}
+  };
+
   return (
     <div className="relative w-full md:w-4/5 mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
       {isLoading ? (
@@ -193,6 +221,28 @@ export default function OrderRoomManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       {row.order.TrangThaiDon}
+                      {row.order.TrangThaiDon === "not confirmed" && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setAction("accept");
+                              handleApproveBooking(row.order.MaDon);
+                            }}
+                            className="bg-green-500 text-white px-2 py-1 rounded"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => {
+                              setAction("refuse");
+                              handleApproveBooking(row.order.MaDon);
+                            }}
+                            className="bg-red-500 text-white px-2 py-1 rounded"
+                          >
+                            Refuse
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       {format(new Date(row.order.ThoiGianDat), "dd/MM/yyyy")}

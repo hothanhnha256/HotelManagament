@@ -75,6 +75,7 @@ export default function BookingRooms() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
           },
         }
       );
@@ -299,17 +300,32 @@ export default function BookingRooms() {
                         key={price.ThoiGianBatDauApDung}
                         className="text-gray-700 dark:text-gray-300"
                       >
-                        {format(
-                          new Date(price.ThoiGianBatDauApDung),
-                          "dd/MM/yyyy"
-                        )}{" "}
-                        - {price.GiaCongBo} VND
-                        {price.GiaGiam && (
-                          <span className="text-red-500">
-                            {" "}
-                            (Giảm: {price.GiaGiam} VND)
-                          </span>
-                        )}
+                        <div>
+                          {format(
+                            new Date(price.ThoiGianBatDauApDung),
+                            "dd/MM/yyyy"
+                          )}{" "}
+                          - {price.GiaCongBo} VND
+                        </div>
+                        <div>
+                          {price.GiaGiam && (
+                            <span className="text-red-500 font-bold">
+                              {" "}
+                              (Đặt với giá ưu đãi được giảm: {
+                                price.GiaGiam
+                              }{" "}
+                              VND)
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          {price.GiaGiam && (
+                            <span className="text-green-500 font-bold">
+                              Giá cuối cùng: {price.GiaCongBo - price.GiaGiam}{" "}
+                              VND
+                            </span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
