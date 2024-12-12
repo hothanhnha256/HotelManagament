@@ -46,6 +46,8 @@ export default function AmenitiesBranch() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
+      console.log(result);
+      
       setData(result.data);
       setTotalPages(Math.ceil(result.total / limit));
       setIsLoading(false);
@@ -128,6 +130,9 @@ export default function AmenitiesBranch() {
                 Mô tả
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Chi nhánh
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Cập nhật
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -138,7 +143,7 @@ export default function AmenitiesBranch() {
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
             {paginatedData.map((amenity) => (
               <tr key={amenity.ID}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-300">
                   {amenity.ID}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -146,6 +151,9 @@ export default function AmenitiesBranch() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                   {amenity.MoTa}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {amenity.MaChiNhanh}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                   <button

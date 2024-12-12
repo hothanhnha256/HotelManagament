@@ -122,7 +122,7 @@ export default function EmployeeDetail(props: EmployeeInterface) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md h-4/5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black dark:text-white">
             Chi tiết nhân viên
@@ -134,7 +134,7 @@ export default function EmployeeDetail(props: EmployeeInterface) {
             X
           </button>
         </div>
-        <form onSubmit={handleUpdate}>
+        <form onSubmit={handleUpdate} className="h-5/6 overflow-y-scroll ">
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-300">
               Họ Tên
@@ -301,23 +301,23 @@ export default function EmployeeDetail(props: EmployeeInterface) {
             </select>
           </div>
           {error && <div className="mb-4 text-red-500">{error}</div>}
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={props.onClose}
-              className="mr-4 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-              disabled={isLoading}
-            >
-              {isLoading ? "Đang cập nhật..." : "Cập nhật"}
-            </button>
-          </div>
         </form>
+        <div className="flex justify-center mt-2">
+          <button
+            type="button"
+            onClick={props.onClose}
+            className="mr-4 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded"
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+            disabled={isLoading}
+          >
+            {isLoading ? "Đang cập nhật..." : "Cập nhật"}
+          </button>
+        </div>
       </div>
     </div>
   );

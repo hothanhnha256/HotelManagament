@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import RoomServiceDetail from "./openRoomServiceDetail/roomServiceDetail";
 import CreateRoomService from "./createRoomService/createRoomService";
+import { currencyFormat } from "@/utils/formatter";
+import { serviceNameMapping } from "@/utils/dataMapping";
 
 export interface RoomServiceProps {
   MaDichVu: string;
@@ -165,7 +167,7 @@ export default function RoomService() {
     return (
       <div key={category} className="mb-6">
         <h2 className="text-xl font-bold mb-2 text-black dark:text-white capitalize">
-          {category}
+          {serviceNameMapping(category)}
         </h2>
         {paginatedData.length === 0 ? (
           <div>
@@ -230,7 +232,7 @@ export default function RoomService() {
                       </td>
                     )}
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                      {service.MucGia}
+                      {currencyFormat(service.MucGia)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       {service.MoTa}

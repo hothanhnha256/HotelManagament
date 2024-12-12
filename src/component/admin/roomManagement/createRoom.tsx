@@ -128,8 +128,8 @@ export default function CreateRoom({
               required
             >
               <option value="">Chọn loại phòng</option>
-              <option value="vip">VIP</option>
-              <option value="normal">Normal</option>
+              <option value="vip">Phòng VIP</option>
+              <option value="normal">Phòng thường</option>
             </select>
           </div>
           <div className="mb-4">

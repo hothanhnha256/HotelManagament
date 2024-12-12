@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import DiscountDetail from "./openDiscountDetail/discountDetail";
 import CreateDiscount from "./createDiscount/createDiscount";
+import { formatNumber } from "@/utils/formatter";
 
 export interface DiscountProps {
   MaGiamGia: string;
@@ -163,7 +164,7 @@ export default function Discount() {
                         {new Date(discount.ThoiGianKetThuc).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {discount.PhanTramGiamGia}
+                        {formatNumber(parseFloat(discount.PhanTramGiamGia)) + "%"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import FacilitiesDetail from "./openFacilitiesDetail/amenitiesDetail";
 import CreateFacilities from "./createFacilities/createFacilities";
+import { facilityStatusMapping } from "@/utils/dataMapping";
 
 export interface FacilitiesProps {
   ID: string;
@@ -196,7 +197,7 @@ export default function Facilities({ idRoom }: { idRoom: string }) {
                         {facility.GiaMua}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {facility.TinhTrang}
+                        {facilityStatusMapping(facility.TinhTrang)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button

@@ -81,8 +81,8 @@ export default function CreateAmenitiesRoom({
             <label className="block text-gray-700">Tên tiện nghi</label>
             <input
               type="text"
-              name="moTa"
-              value={newAmenitiesRoom.moTa}
+              name="ten"
+              value={newAmenitiesRoom.ten}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
@@ -92,8 +92,8 @@ export default function CreateAmenitiesRoom({
             <label className="block text-gray-700">Mô tả</label>
             <input
               type="text"
-              name="ten"
-              value={newAmenitiesRoom.ten}
+              name="moTa"
+              value={newAmenitiesRoom.moTa}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
               required

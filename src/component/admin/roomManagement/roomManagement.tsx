@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { dataRoom } from "./interface/roomInterface";
 import CreateRoom from "./createRoom";
 import RoomDetail from "./openRoomDetail/RoomDetail";
+import {roomStatusMapping, roomTypeMapping} from "../../../utils/dataMapping"
 
 interface AdjustPriceRoomProps {
   month: string;
@@ -301,8 +302,8 @@ export default function RoomManagement() {
               className="p-2 border border-gray-300 rounded"
             >
               <option value="">Tất cả loại phòng</option>
-              <option value="vip">VIP</option>
-              <option value="normal">NORMAL</option>
+              <option value="vip">Phòng VIP</option>
+              <option value="normal">Phòng thường</option>
             </select>
             <select
               value={rowsPerPage}
@@ -522,10 +523,10 @@ export default function RoomManagement() {
                       {row.MaChiNhanh}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                      {row.TrangThai}
+                      {roomStatusMapping(row.TrangThai)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                      {row.LoaiPhong}
+                      {roomTypeMapping(row.LoaiPhong)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                       <button
@@ -618,7 +619,7 @@ export default function RoomManagement() {
               {">>"}
             </button>
             <span>
-              Go to page{" "}
+              Đi tới trang{" "}
               <input
                 type="number"
                 value={currentPage + 1}
@@ -629,7 +630,7 @@ export default function RoomManagement() {
                 }
                 className="w-10 text-center py-1 border rounded placeholder-gray-400"
               />{" "}
-              of {totalPages}
+              của {totalPages}
             </span>
           </div>
         </div>
