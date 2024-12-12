@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -25,8 +26,8 @@ export default function Sidebar() {
   }, [isDarkMode]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
+    Cookies.remove("token");
+    window.location.href = "/authenticate";
   };
 
   return (

@@ -29,7 +29,7 @@ export default function AdminHomePage() {
       {/* Footer */}
       <footer className="bg-white/10 backdrop-blur-sm shadow-md">
         <div className="container mx-auto py-6 px-4 text-center text-white">
-          <p>&copy; 2023 Hotel Management System. All rights reserved.</p>
+          <p>&copy; 2024 Hotel Management System. All rights reserved.</p>
         </div>
       </footer>
     </div>

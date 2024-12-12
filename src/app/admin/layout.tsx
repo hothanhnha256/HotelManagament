@@ -12,13 +12,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full min-h-screen bg-gradient-to-r bg">
-      <div className="flex">
-        <Navbar />
+    <>
+      <div className="w-full min-h-screen bg-gradient-to-r bg">
+        <div className="flex">
+          <Navbar />
+        </div>
+        <div className="min-h-[calc(100vh)] flex items-center justify-center">
+          {children}
+        </div>
       </div>
-      <div className="min-h-[calc(100vh)] flex items-center justify-center">
-        {children}
-      </div>
-    </div>
+    </>
   );
 }

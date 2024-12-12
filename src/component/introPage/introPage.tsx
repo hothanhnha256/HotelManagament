@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
+import cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,12 +17,14 @@ export default function LoginPage() {
     try {
       // Redirect to homepages
       if (username === "admin" && password === "admin") {
+        cookies.set("token", "admin", { expires: 1, secure: true }); // Set token in cookies
         router.push("/admin");
       } else {
-        router.push("/user");
+        setError("Username or password is incorrect");
       }
     } catch (error) {
       console.error("Login failed:", error);
+      setError("An error occurred during login. Please try again.");
     }
   };
 
@@ -84,6 +88,9 @@ export default function LoginPage() {
               </a>
             </div>
           </div>
+          {error && (
+            <div className="text-red-500 text-sm font-semibold">{error}</div>
+          )}
           <div>
             <button
               type="submit"

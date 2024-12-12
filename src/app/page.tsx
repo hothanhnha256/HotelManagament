@@ -1,5 +1,4 @@
-import Image from "next/image";
-import IntroPage from "@/component/introPage/introPage";
+import UserHomePage from "@/component/homepage/userhome";
 export default function Home() {
-  return <IntroPage />;
+  return <UserHomePage />;
 }

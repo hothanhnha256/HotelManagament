@@ -50,12 +50,12 @@ export default function UserSidebar() {
           <ul className="space-y-4 text-lg font-semibold">
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/user"
+                pathname === "/"
                   ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
                   : ""
               } flex items-center`}
             >
-              <Link href="/user" legacyBehavior>
+              <Link href="/" legacyBehavior>
                 <a className="w-full">Trang chủ</a>
               </Link>
             </li>
@@ -81,7 +81,7 @@ export default function UserSidebar() {
                 <a className="w-full">Lịch sử đặt phòng</a>
               </Link>
             </li>
-            <li
+            {/* <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
               flex items-center
               ${isDarkMode}
@@ -90,7 +90,7 @@ export default function UserSidebar() {
               <button className="" onClick={handleLogout}>
                 Đăng xuất
               </button>
-            </li>
+            </li> */}
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
               flex items-center
