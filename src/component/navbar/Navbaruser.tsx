@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-
+import Cookies from "js-cookie";
 export default function UserSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -24,8 +25,12 @@ export default function UserSidebar() {
     }
   }, [isDarkMode]);
 
+  useEffect(() => {
+    const userToken = Cookies.get("tokenuser");
+    setToken(userToken || null);
+  }, []);
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    Cookies.remove("tokenuser");
     window.location.href = "/";
   };
   return (
@@ -59,6 +64,19 @@ export default function UserSidebar() {
                 <a className="w-full">Trang chủ</a>
               </Link>
             </li>
+            {token && (
+              <li
+                className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
+                  pathname === "/user/myInfo"
+                    ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
+                    : ""
+                } flex items-center`}
+              >
+                <Link href="/user/myInfo" legacyBehavior>
+                  <a className="w-full">Thông tin cá nhân</a>
+                </Link>
+              </li>
+            )}
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
                 pathname === "/user/booking"
@@ -70,27 +88,46 @@ export default function UserSidebar() {
                 <a className="w-full">Đặt phòng</a>
               </Link>
             </li>
-            <li
-              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
-                pathname === "/user/history"
-                  ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
-                  : ""
-              } flex items-center`}
-            >
-              <Link href="/user/history" legacyBehavior>
-                <a className="w-full">Lịch sử đặt phòng</a>
-              </Link>
-            </li>
-            {/* <li
-              className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
+
+            {token && (
+              <>
+                {" "}
+                <li
+                  className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
+                    pathname === "/user/history"
+                      ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
+                      : ""
+                  } flex items-center`}
+                >
+                  <Link href="/user/history" legacyBehavior>
+                    <a className="w-full">Lịch sử đặt phòng</a>
+                  </Link>
+                </li>
+                <li
+                  className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
               flex items-center
               ${isDarkMode}
               `}
-            >
-              <button className="" onClick={handleLogout}>
-                Đăng xuất
-              </button>
-            </li> */}
+                >
+                  <button className="" onClick={handleLogout}>
+                    Đăng xuất
+                  </button>
+                </li>
+              </>
+            )}
+            {!token && (
+              <li
+                className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out ${
+                  pathname === "/authenticate/user"
+                    ? "bg-gray-300 text-black dark:bg-gray-800 dark:text-white"
+                    : ""
+                } flex items-center`}
+              >
+                <Link href="/authenticate/user" legacyBehavior>
+                  <a className="w-full">Đăng nhập</a>
+                </Link>
+              </li>
+            )}
             <li
               className={`hover:rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 transition-all duration-150 ease-in-out 
               flex items-center

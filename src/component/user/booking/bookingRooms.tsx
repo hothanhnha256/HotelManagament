@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
-
+import Cookies from "js-cookie";
 export interface Services {
   Ten: string;
   Mota: string;
@@ -11,6 +11,15 @@ export interface Services {
 export interface Facitities {
   TenTrangBi: string;
   imageURL: string;
+}
+interface UserProfile {
+  ID: string;
+  Ten: string;
+  CCCD: string;
+  SoDienThoai: string;
+  NgaySinh: string;
+  GioiTinh: string;
+  Email: string;
 }
 
 export interface RoomPrice {
@@ -42,6 +51,7 @@ export default function BookingRooms() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -59,6 +69,26 @@ export default function BookingRooms() {
     deposit: 0,
   });
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
+
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch(`${APIURL}/auth/user/profile`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${Cookies.get("tokenuser")}`,
+        },
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        setProfile(data.data);
+      } else {
+      }
+    } catch (error) {
+      console.log("An error occurred while fetching profile data");
+    }
+  };
 
   const fetchDataRooms = async (
     limit: number,
@@ -145,6 +175,10 @@ export default function BookingRooms() {
   };
 
   const handleBooking = async () => {
+    if (Cookies.get("tokenuser") === undefined) {
+      alert("Bạn cần đăng nhập để đặt phòng");
+      return;
+    }
     if (selectedRooms.length === 0) return;
 
     const roomIds = selectedRooms.map((room) => room.MaPhong);
@@ -152,13 +186,16 @@ export default function BookingRooms() {
       roomIds: JSON.stringify(roomIds),
       checkInDate: format(startDate!, "yyyy-MM-dd"),
       checkOutDate: format(endDate!, "yyyy-MM-dd"),
-      cusName: bookingData.cusName,
-      cusPhoneNumber: bookingData.cusPhoneNumber,
-      cusCitizenId: bookingData.cusCitizenId,
-      cusSex: bookingData.cusSex,
-      cusDOB: bookingData.cusDOB,
       deposit: bookingData.deposit.toString(),
-    }).toString();
+    });
+    requestBody.append("cusName", profile?.Ten || "");
+    requestBody.append("cusPhoneNumber", profile?.SoDienThoai || "");
+    requestBody.append("cusCitizenId", profile?.CCCD || "");
+    requestBody.append("cusSex", profile?.GioiTinh || "");
+    requestBody.append(
+      "cusDOB",
+      profile ? format(new Date(profile.NgaySinh), "yyyy-MM-dd") : ""
+    );
 
     try {
       const response = await fetch(`${APIURL}/booking`, {
@@ -166,7 +203,7 @@ export default function BookingRooms() {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: requestBody,
+        body: requestBody.toString(),
       });
       console.log("Booking request body: ", requestBody);
       console.log("Booking response: ", response);
@@ -352,7 +389,10 @@ export default function BookingRooms() {
           {selectedRooms.length > 0 && (
             <div className="fixed bottom-10 right-10">
               <button
-                onClick={() => setIsBookingModalOpen(true)}
+                onClick={() => {
+                  setIsBookingModalOpen(true);
+                  fetchProfile();
+                }}
                 className="px-4 py-2 bg-blue-500 text-white rounded shadow-lg hover:bg-blue-600 transition-colors duration-300"
               >
                 Đặt phòng
@@ -415,66 +455,23 @@ export default function BookingRooms() {
             <h2 className="text-2xl font-bold mb-4">Đặt phòng</h2>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Tên khách hàng</label>
-              <input
-                type="text"
-                value={bookingData.cusName}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, cusName: e.target.value })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              {profile?.Ten}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Số điện thoại</label>
-              <input
-                type="text"
-                value={bookingData.cusPhoneNumber}
-                onChange={(e) =>
-                  setBookingData({
-                    ...bookingData,
-                    cusPhoneNumber: e.target.value,
-                  })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              {profile?.SoDienThoai}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">CMND/CCCD</label>
-              <input
-                type="text"
-                value={bookingData.cusCitizenId}
-                onChange={(e) =>
-                  setBookingData({
-                    ...bookingData,
-                    cusCitizenId: e.target.value,
-                  })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              {profile?.CCCD}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Giới tính</label>
-              <select
-                value={bookingData.cusSex}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, cusSex: e.target.value })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
-              </select>
+              {profile?.GioiTinh}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Ngày sinh</label>
-              <input
-                type="date"
-                value={bookingData.cusDOB}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, cusDOB: e.target.value })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              />
+              {profile ? format(new Date(profile.NgaySinh), "dd/MM/yyyy") : ""}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Đặt cọc</label>

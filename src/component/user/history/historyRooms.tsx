@@ -8,7 +8,7 @@ import {
   FaFastBackward,
   FaFastForward,
 } from "react-icons/fa";
-
+import Cookies from "js-cookie";
 export interface Room {
   MaPhong: string;
   ThoiGianTaoBanGhiPhong: string;
@@ -43,18 +43,17 @@ export default function HistoryRooms() {
   const [totalPages, setTotalPages] = useState(0);
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchData = async (
-    limit: number,
-    page: number,
-    cusPhoneNumber: string
-  ) => {
+  const fetchData = async (limit: number, page: number) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${APIURL}/booking/all?cusPhoneNumber=0386467955&limit=${limit}&page=${page}`,
+        `${APIURL}/booking/user?limit=${limit}&page=${page}`,
         {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("tokenuser")}`,
+          },
         }
       );
       if (!response.ok)
@@ -70,7 +69,7 @@ export default function HistoryRooms() {
   };
 
   useEffect(() => {
-    fetchData(rowsPerPage, currentPage + 1, "0386467955");
+    fetchData(rowsPerPage, currentPage + 1);
   }, [rowsPerPage, currentPage]);
 
   useEffect(() => {
