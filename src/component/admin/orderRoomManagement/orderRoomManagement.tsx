@@ -219,16 +219,16 @@ export default function OrderRoomManagement() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                                             {row.order.TrangThaiDon === "confirmed" ? (
-                                                <span className="text-green-600 font-bold">Đã xác nhận</span>
+                                                <span className="text-green-600 font-semibold">Đã xác nhận</span>
                                             ) : row.order.TrangThaiDon === "not confirmed" ? (
-                                                <span className="text-yellow-600 font-bold">Chưa xác nhận</span>
+                                                <span className="text-yellow-600 font-semibold">Chưa xác nhận</span>
                                             ) : row.order.TrangThaiDon === "cancelled" ? (
-                                                <span className="text-red-600 font-bold">Đã hủy</span>
+                                                <span className="text-red-600 font-semibold">Đã hủy</span>
                                             ) : (
                                                 ""
                                             )}
                                             {row.order.TrangThaiDon === "not confirmed" && (
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 mt-1">
                                                     <button
                                                         onClick={() => {
                                                             setAction("accept");
@@ -251,7 +251,7 @@ export default function OrderRoomManagement() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                                            {format(new Date(row.order.ThoiGianDat), "dd/MM/yyyy")}
+                                            {format(new Date(row.order.ThoiGianDat), "dd/MM/yyyy HH:mm:ss")}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                                             {format(new Date(row.order.NgayNhanPhong), "dd/MM/yyyy")}
