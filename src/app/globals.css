@@ -68,6 +68,28 @@
 
 /* USE FOR HISTORY + NAVBAR */
 @layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+
+  /* Customize the scrollbar handle */
+  ::-webkit-scrollbar-thumb {
+    background-color: gray; /* Green thumb */
+    border-radius: 4px; /* Rounded edges */
+    border: 2px solid #fff; /* White border around the thumb */
+  }
+
+  /* Customize the scrollbar track (background) */
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Light gray background */
+    border-radius: 4px;
+  }
+
+  /* On hover, make the thumb a little darker */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #45a049;
+  }
+
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

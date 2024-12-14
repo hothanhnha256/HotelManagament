@@ -2,104 +2,126 @@
 import { useState } from "react";
 import cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { LockIcon, UserIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 
-export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+export default function TrangDangNhap() {
+  const [tenDangNhap, setTenDangNhap] = useState("");
+  const [matKhau, setMatKhau] = useState("");
+  const [hienMatKhau, setHienMatKhau] = useState(false);
   const router = useRouter();
-  const [error, setError] = useState("");
+  const [loiDangNhap, setLoiDangNhap] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const xuLyDangNhap = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
     try {
-      // Redirect to homepages
-      if (username === "admin" && password === "admin") {
-        cookies.set("token", "admin", { expires: 1, secure: true }); // Set token in cookies
+      if (tenDangNhap === "admin" && matKhau === "admin") {
+        cookies.set("token", "admin", { expires: 1, secure: true });
         router.push("/admin");
       } else {
-        setError("Username or password is incorrect");
+        setLoiDangNhap("Tên đăng nhập hoặc mật khẩu không đúng");
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      setError("An error occurred during login. Please try again.");
+      console.error("Đăng nhập thất bại:", error);
+      setLoiDangNhap("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-r from-blue-500 to-purple-600 text-gray-900 dark:text-white flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-4xl font-extrabold text-center mb-6">Login</h1>
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Username
-            </label>
+    <div className="min-h-screen w-screen bg-gradient-to-br from-teal-400 via-blue-500 to-indigo-600 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:scale-105">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+            Đăng Nhập
+          </h1>
+          <p className="text-gray-500 mt-2">Chào mừng quay trở lại!</p>
+        </div>
+        
+        <form onSubmit={xuLyDangNhap} className="space-y-6">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <UserIcon className="h-5 w-5 text-gray-400" />
+            </div>
             <input
               type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+              placeholder="Tên đăng nhập"
+              value={tenDangNhap}
+              onChange={(e) => setTenDangNhap(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition duration-300"
               required
             />
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Password
-            </label>
+          
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <LockIcon className="h-5 w-5 text-gray-400" />
+            </div>
             <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+              type={hienMatKhau ? "text" : "password"}
+              placeholder="Mật khẩu"
+              value={matKhau}
+              onChange={(e) => setMatKhau(e.target.value)}
+              className="w-full pl-10 pr-12 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition duration-300"
               required
             />
+            <button
+              type="button"
+              onClick={() => setHienMatKhau(!hienMatKhau)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              {hienMatKhau ? (
+                <EyeOffIcon className="h-5 w-5 text-gray-400" />
+              ) : (
+                <EyeIcon className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
           </div>
+          
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
-                id="remember-me"
+                id="ghi-nho"
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label
-                htmlFor="remember-me"
+                htmlFor="ghi-nho"
                 className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
               >
-                Remember me
+                Ghi nhớ đăng nhập
               </label>
             </div>
             <div className="text-sm">
               <a
                 href="#"
-                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
               >
-                Forgot your password?
+                Quên mật khẩu?
               </a>
             </div>
           </div>
-          {error && (
-            <div className="text-red-500 text-sm font-semibold">{error}</div>
+          
+          {loiDangNhap && (
+            <div className="text-red-500 text-sm font-semibold text-center">
+              {loiDangNhap}
+            </div>
           )}
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            >
-              Sign In
-            </button>
-          </div>
+          
+          <button
+            type="submit"
+            className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:opacity-90 transition duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Đăng Nhập
+          </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 text-sm">
+            Bạn chưa có tài khoản?{" "}
+            <a href="#" className="text-blue-600 hover:underline">
+              Đăng ký ngay
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
