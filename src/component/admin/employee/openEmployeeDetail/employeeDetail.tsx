@@ -95,7 +95,7 @@ export default function EmployeeDetail(props: EmployeeInterface) {
     formData.append("startWorkingDate", newEmployee.startWorkingDate);
     formData.append("eduLevel", newEmployee.eduLevel);
     formData.append("branchId", newEmployee.branchId);
-    //console.log("Form Data: ", formData.toString());
+    console.log("Form Data: ", formData.toString());
 
     try {
       const response = await fetch(`${APIURL}/employees/${props.entry.ID}`, {
@@ -108,8 +108,9 @@ export default function EmployeeDetail(props: EmployeeInterface) {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      console.log("Response: ", response);
       const result = await response.json();
-      //console.log("Updated Employee: ", result);
+      console.log("Updated Employee: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
@@ -301,23 +302,23 @@ export default function EmployeeDetail(props: EmployeeInterface) {
             </select>
           </div>
           {error && <div className="mb-4 text-red-500">{error}</div>}
+          <div className="flex justify-center mt-2">
+            <button
+              type="button"
+              onClick={props.onClose}
+              className="mr-4 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+              disabled={isLoading}
+            >
+              {isLoading ? "Đang cập nhật..." : "Cập nhật"}
+            </button>
+          </div>
         </form>
-        <div className="flex justify-center mt-2">
-          <button
-            type="button"
-            onClick={props.onClose}
-            className="mr-4 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded"
-          >
-            Hủy
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-            disabled={isLoading}
-          >
-            {isLoading ? "Đang cập nhật..." : "Cập nhật"}
-          </button>
-        </div>
       </div>
     </div>
   );
