@@ -47,9 +47,7 @@ export default function FacilitiesDetail(props: FacilitiesInterface) {
       tinhTrang: newFacilities.tinhTrang,
     };
     //console.log("Request Body: ", requestBody);
-    //console.log(
-      `${APIURL}/facilities/update/${props.idRoom}/${props.entry.ID}`
-    );
+
     try {
       const response = await fetch(
         `${APIURL}/facilities/update/${props.idRoom}/${props.entry.ID}`,
