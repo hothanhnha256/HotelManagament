@@ -26,7 +26,7 @@ export default function CreateAmenitiesBranch({
   };
 
   const validateInputs = () => {
-    console.log("newAmenitiesBranch: ", newAmenitiesBranch);
+    //console.log("newAmenitiesBranch: ", newAmenitiesBranch);
     if (!newAmenitiesBranch.name) {
       setError("Tên không được để trống.");
       return false;
@@ -61,11 +61,11 @@ export default function CreateAmenitiesBranch({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new AmenitiesBranch: ", result);
+      //console.log("Create new AmenitiesBranch: ", result);
       fetchDataAmenitiesBranch();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create AmenitiesBranch ", error);
+      //console.log("Failed to create AmenitiesBranch ", error);
       setError("Failed to create AmenitiesBranch. Please try again.");
     }
   };

@@ -63,11 +63,11 @@ export default function AmenitiesRoomDetail(props: AmenitiesRoomInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated AmenitiesRoom: ", result);
+      //console.log("Updated AmenitiesRoom: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update AmenitiesRoom ", error);
+      //console.log("Failed to update AmenitiesRoom ", error);
       setError("Failed to update AmenitiesRoom. Please try again.");
     } finally {
       setIsLoading(false);

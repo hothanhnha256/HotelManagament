@@ -30,7 +30,7 @@ export default function PriceOfRoom({ idRoom }: PriceOfRoomProps) {
     setIsLoading(true);
     const encodedMonth = encodeURIComponent(`["${month}"]`);
     const url = `${APIURL}/rooms/${idRoom}/price/?months=${encodedMonth}`;
-    console.log(url);
+    //console.log(url);
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -45,7 +45,7 @@ export default function PriceOfRoom({ idRoom }: PriceOfRoomProps) {
       setData(result.data[0].data);
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -59,7 +59,7 @@ export default function PriceOfRoom({ idRoom }: PriceOfRoomProps) {
       endDate,
       publicPrice,
     }).toString();
-    console.log("Request body: ", requestBody);
+    //console.log("Request body: ", requestBody);
 
     try {
       const response = await fetch(`${APIURL}/rooms/${idRoom}/price`, {
@@ -73,10 +73,10 @@ export default function PriceOfRoom({ idRoom }: PriceOfRoomProps) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Adjusted price: ", result);
+      //console.log("Adjusted price: ", result);
       fetchDataPriceOfRoom(format(selectedMonth!, "yyyy-MM"));
     } catch (error) {
-      console.log("Failed to adjust price: ", error);
+      //console.log("Failed to adjust price: ", error);
     }
   };
 

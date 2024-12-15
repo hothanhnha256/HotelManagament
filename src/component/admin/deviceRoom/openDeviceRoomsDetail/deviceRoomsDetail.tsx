@@ -53,11 +53,11 @@ export default function DeviceRoomsDetail(props: DeviceRoomsInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated DeviceRooms: ", result);
+      //console.log("Updated DeviceRooms: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update deviceRoom ", error);
+      //console.log("Failed to update deviceRoom ", error);
       setError("Failed to update device room. Please try again.");
     } finally {
       setIsLoading(false);

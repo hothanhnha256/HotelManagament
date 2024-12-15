@@ -46,13 +46,13 @@ export default function AmenitiesBranch() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log(result);
-      
+      //console.log(result);
+
       setData(result.data);
       setTotalPages(Math.ceil(result.total / limit));
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -74,14 +74,14 @@ export default function AmenitiesBranch() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted AmenitiesBranch: ", result);
+      //console.log("Deleted AmenitiesBranch: ", result);
       fetchDataAmenitiesBranch(
         rowsPerPage,
         currentPage + 1,
         debouncedSearchInput
       );
     } catch (error) {
-      console.log("Failed to delete data: ", error);
+      //console.log("Failed to delete data: ", error);
     }
   };
 

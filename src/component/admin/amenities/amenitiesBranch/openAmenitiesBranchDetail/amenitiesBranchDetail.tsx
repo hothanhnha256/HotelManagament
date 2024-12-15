@@ -68,11 +68,11 @@ export default function AmenitiesBranchDetail(props: AmenitiesBranchInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated AmenitiesBranch: ", result);
+      //console.log("Updated AmenitiesBranch: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update AmenitiesBranch ", error);
+      //console.log("Failed to update AmenitiesBranch ", error);
       setError("Failed to update AmenitiesBranch. Please try again.");
     } finally {
       setIsLoading(false);

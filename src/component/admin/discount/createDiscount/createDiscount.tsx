@@ -77,11 +77,11 @@ export default function CreateDiscount({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new Discount: ", result);
+      //console.log("Create new Discount: ", result);
       fetchDataDiscount();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create discount ", error);
+      //console.log("Failed to create discount ", error);
       setError("Failed to create discount. Please try again.");
     }
   };

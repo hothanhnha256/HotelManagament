@@ -96,11 +96,11 @@ export default function BookingRoomService(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("result: ", result.data);
+      //console.log("result: ", result.data);
       setData(result.data);
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -122,7 +122,7 @@ export default function BookingRoomService(
       }
       fetchDataBookingRoomService();
     } catch (error) {
-      console.log("Failed to delete booking room service: ", error);
+      //console.log("Failed to delete booking room service: ", error);
     }
   };
 
@@ -149,8 +149,8 @@ export default function BookingRoomService(
       requestBody.append("finishTime", finishTime);
     }
 
-    console.log("requestBody: ", requestBody.toString());
-    console.log("MaDon: ", MaDon);
+    //console.log("requestBody: ", requestBody.toString());
+    //console.log("MaDon: ", MaDon);
     try {
       const response = await fetch(`${APIURL}/booking/room-service/${MaDon}`, {
         method: "PATCH",
@@ -168,7 +168,7 @@ export default function BookingRoomService(
       fetchDataBookingRoomService();
       setSelectedService(null);
     } catch (error) {
-      console.log("Failed to update booking room service: ", error);
+      //console.log("Failed to update booking room service: ", error);
     }
   };
 
@@ -185,8 +185,8 @@ export default function BookingRoomService(
     }
     requestBody.append("status", status);
 
-    console.log("requestBody: ", requestBody.toString());
-    console.log("MaDon: ", MaDon);
+    //console.log("requestBody: ", requestBody.toString());
+    //console.log("MaDon: ", MaDon);
     try {
       const response = await fetch(`${APIURL}/booking/room-service/${MaDon}`, {
         method: "PATCH",
@@ -203,7 +203,7 @@ export default function BookingRoomService(
       fetchDataBookingRoomService();
       setSelectedService(null);
     } catch (error) {
-      console.log("Failed to update booking room service: ", error);
+      //console.log("Failed to update booking room service: ", error);
     }
   };
 
@@ -243,7 +243,7 @@ export default function BookingRoomService(
       alert("Dịch vụ đã được đặt thành công");
       fetchDataBookingRoomService();
     } catch (error) {
-      console.log("Failed to book room service: ", error);
+      //console.log("Failed to book room service: ", error);
     }
   };
 

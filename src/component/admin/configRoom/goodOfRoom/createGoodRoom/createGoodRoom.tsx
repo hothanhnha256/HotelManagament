@@ -54,11 +54,11 @@ export default function CreateGoodRoom({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new GoodRoom: ", result);
+      //console.log("Create new GoodRoom: ", result);
       fetchDataGoodRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create GoodRoom ", error);
+      //console.log("Failed to create GoodRoom ", error);
       setError("Failed to create GoodRoom. Please try again.");
     }
   };

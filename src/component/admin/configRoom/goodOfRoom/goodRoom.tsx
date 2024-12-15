@@ -6,9 +6,9 @@ export interface GoodRoomProps {
   MaDoTieuDung: string;
   SoLuong: string;
   MaPhong: string;
-  TenSanPham: string,
-  GiaNhapDonVi: string,
-  GiaBanDonVi: string
+  TenSanPham: string;
+  GiaNhapDonVi: string;
+  GiaBanDonVi: string;
 }
 
 export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
@@ -41,7 +41,7 @@ export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
       setTotalPages(Math.ceil(result.data.length / rowsPerPage));
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -63,10 +63,10 @@ export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted GoodRoom: ", result);
+      //console.log("Deleted GoodRoom: ", result);
       fetchDataGoodRoom();
     } catch (error) {
-      console.log("Failed to delete data: ", error);
+      //console.log("Failed to delete data: ", error);
     }
   };
 

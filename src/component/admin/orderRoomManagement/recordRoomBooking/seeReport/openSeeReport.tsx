@@ -45,7 +45,7 @@ export default function OpenSeeReport(props: DataBookingRoomProps) {
       const result = await response.json();
       setData(result.data);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
     }
     setIsLoading(false);
   };

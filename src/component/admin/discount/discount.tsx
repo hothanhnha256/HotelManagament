@@ -47,7 +47,7 @@ export default function Discount() {
       setTotalPages(Math.ceil(result.total / limit));
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -65,10 +65,10 @@ export default function Discount() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted Discount: ", result);
+      //console.log("Deleted Discount: ", result);
       fetchDataDiscount(rowsPerPage, currentPage + 1, searchInput);
     } catch (error) {
-      console.log("Failed to delete data: ", error);
+      //console.log("Failed to delete data: ", error);
     }
   };
 
@@ -164,7 +164,8 @@ export default function Discount() {
                         {new Date(discount.ThoiGianKetThuc).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                        {formatNumber(parseFloat(discount.PhanTramGiamGia)) + "%"}
+                        {formatNumber(parseFloat(discount.PhanTramGiamGia)) +
+                          "%"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         <button

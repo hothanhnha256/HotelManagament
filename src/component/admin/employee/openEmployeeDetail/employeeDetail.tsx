@@ -95,7 +95,7 @@ export default function EmployeeDetail(props: EmployeeInterface) {
     formData.append("startWorkingDate", newEmployee.startWorkingDate);
     formData.append("eduLevel", newEmployee.eduLevel);
     formData.append("branchId", newEmployee.branchId);
-    console.log("Form Data: ", formData.toString());
+    //console.log("Form Data: ", formData.toString());
 
     try {
       const response = await fetch(`${APIURL}/employees/${props.entry.ID}`, {
@@ -109,11 +109,11 @@ export default function EmployeeDetail(props: EmployeeInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated Employee: ", result);
+      //console.log("Updated Employee: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update Employee ", error);
+      //console.log("Failed to update Employee ", error);
       setError("Failed to update Employee. Please try again.");
     } finally {
       setIsLoading(false);

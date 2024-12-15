@@ -64,12 +64,12 @@ export default function RoomServiceDetail(props: RoomServiceInterface) {
     } else {
       formData.append("type", props.type);
     }
-    console.log("Updating RoomService: ", newRoomService);
-    console.log("Form Data: ", formData.toString());
+    //console.log("Updating RoomService: ", newRoomService);
+    //console.log("Form Data: ", formData.toString());
 
     try {
-      console.log(formData);
-      
+      //console.log(formData);
+
       const response = await fetch(`${APIURL}/room-service`, {
         method: "PATCH",
         headers: {
@@ -81,11 +81,11 @@ export default function RoomServiceDetail(props: RoomServiceInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated RoomService: ", result);
+      //console.log("Updated RoomService: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update RoomService ", error);
+      //console.log("Failed to update RoomService ", error);
       setError("Failed to update RoomService. Please try again.");
     } finally {
       setIsLoading(false);

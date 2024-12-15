@@ -83,11 +83,11 @@ export default function CreateRoomService({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new RoomService: ", result);
+      //console.log("Create new RoomService: ", result);
       fetchDataRoomService();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create RoomService ", error);
+      //console.log("Failed to create RoomService ", error);
       setError("Failed to create RoomService. Please try again.");
     }
   };

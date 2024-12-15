@@ -31,7 +31,7 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
       setData(result.data);
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -53,17 +53,17 @@ export default function CheckoutRoom(props: CheckoutRoomCheckoutRoomInterface) {
           },
         }
       );
-      console.log(response);
+      //console.log(response);
       const result = await response.json();
-      console.log(result);
+      //console.log(result);
       if (!response.ok) {
         alert(result.message);
         return;
       }
-      console.log(result);
+      //console.log(result);
       alert("Checkout successfully");
     } catch (error) {
-      console.log("Failed to checkout ", error);
+      //console.log("Failed to checkout ", error);
       alert("Failed to checkout");
     }
   };

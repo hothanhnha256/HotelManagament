@@ -27,7 +27,7 @@ export default function CreateDeviceRooms({
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(JSON.stringify(newDeviceRooms));
+    //console.log(JSON.stringify(newDeviceRooms));
 
     // Prepare form data in x-www-form-urlencoded format
     const formData = new URLSearchParams();
@@ -47,11 +47,11 @@ export default function CreateDeviceRooms({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new DeviceRooms: ", result);
+      //console.log("Create new DeviceRooms: ", result);
       fetchDataDeviceRooms();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create deviceRoom ", error);
+      //console.log("Failed to create deviceRoom ", error);
     }
   };
 

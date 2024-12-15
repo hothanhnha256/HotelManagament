@@ -75,7 +75,7 @@ export default function RoomService() {
       }
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -109,8 +109,8 @@ export default function RoomService() {
     id: string,
     type: RoomServiceCategory
   ) => {
-    console.log("Deleting RoomService: ", id);
-    console.log("Type: ", type);
+    //console.log("Deleting RoomService: ", id);
+    //console.log("Type: ", type);
     try {
       const response =
         type == "meetingRoom"
@@ -133,10 +133,10 @@ export default function RoomService() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Deleted RoomService: ", result);
+      //console.log("Deleted RoomService: ", result);
       fetchDataRoomService(filterType);
     } catch (error) {
-      console.log("Failed to delete data: ", error);
+      //console.log("Failed to delete data: ", error);
     }
   };
 

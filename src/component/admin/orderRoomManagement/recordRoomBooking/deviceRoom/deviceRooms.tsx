@@ -42,7 +42,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       setData(result.data);
       setIsLoading(false);
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      //console.log("Failed to fetch data: ", error);
       setIsLoading(false);
     }
   };
@@ -51,8 +51,8 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
     const requestBody = new URLSearchParams();
     requestBody.append("goods", JSON.stringify(reportProps));
 
-    console.log("Request body: ", requestBody.toString());
-    console.log("Report props: ", reportProps);
+    //console.log("Request body: ", requestBody.toString());
+    //console.log("Report props: ", reportProps);
     try {
       const response = await fetch(
         `${APIURL}/rooms/${props.roomId}/${props.createdAt}/report`,
@@ -67,7 +67,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       );
 
       const result = await response.json();
-      console.log("Result: ", result);
+      //console.log("Result: ", result);
       if (!response.ok) {
         console.error("Failed to create report: ", response.status);
         alert("Failed to create report: " + result.error);
@@ -75,7 +75,7 @@ export default function DeviceUseInRooms(props: DeviceRoomServiceInterface) {
       }
       alert("Báo cáo đã được tạo thành công");
     } catch (error) {
-      console.log("Failed to create report: ", error);
+      //console.log("Failed to create report: ", error);
     }
   };
 

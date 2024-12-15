@@ -34,10 +34,10 @@ export default function CreateRoom({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Branches: ", result);
+      //console.log("Branches: ", result);
       setBranches(result.data);
     } catch (error) {
-      console.log("Failed to fetch branches: ", error);
+      //console.log("Failed to fetch branches: ", error);
     }
   };
 
@@ -61,7 +61,7 @@ export default function CreateRoom({
         },
         body: formData.toString(),
       });
-      console.log("Response: ", response);
+      //console.log("Response: ", response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -69,7 +69,7 @@ export default function CreateRoom({
       fetchDataRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create room: ", error);
+      //console.log("Failed to create room: ", error);
     }
   };
 

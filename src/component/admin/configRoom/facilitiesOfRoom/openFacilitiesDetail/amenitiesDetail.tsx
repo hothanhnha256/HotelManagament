@@ -46,8 +46,8 @@ export default function FacilitiesDetail(props: FacilitiesInterface) {
     const requestBody = {
       tinhTrang: newFacilities.tinhTrang,
     };
-    console.log("Request Body: ", requestBody);
-    console.log(
+    //console.log("Request Body: ", requestBody);
+    //console.log(
       `${APIURL}/facilities/update/${props.idRoom}/${props.entry.ID}`
     );
     try {
@@ -61,16 +61,16 @@ export default function FacilitiesDetail(props: FacilitiesInterface) {
           body: JSON.stringify(requestBody),
         }
       );
-      console.log("Response: ", response);
+      //console.log("Response: ", response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated Facilities: ", result);
+      //console.log("Updated Facilities: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update Facilities ", error);
+      //console.log("Failed to update Facilities ", error);
       setError("Failed to update Facilities. Please try again.");
     } finally {
       setIsLoading(false);

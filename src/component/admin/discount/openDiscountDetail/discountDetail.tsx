@@ -89,11 +89,11 @@ export default function DiscountDetail(props: DiscountInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated Discount: ", result);
+      //console.log("Updated Discount: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update discount ", error);
+      //console.log("Failed to update discount ", error);
       setError("Failed to update discount. Please try again.");
     } finally {
       setIsLoading(false);

@@ -55,11 +55,11 @@ export default function CreateAmenitiesRoom({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new AmenitiesRoom: ", result);
+      //console.log("Create new AmenitiesRoom: ", result);
       fetchDataAmenitiesRoom();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create AmenitiesRoom ", error);
+      //console.log("Failed to create AmenitiesRoom ", error);
       setError("Failed to create AmenitiesRoom. Please try again.");
     }
   };

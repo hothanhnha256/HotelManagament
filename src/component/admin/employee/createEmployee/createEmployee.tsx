@@ -76,11 +76,11 @@ export default function CreateEmployee({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new Employee: ", result);
+      //console.log("Create new Employee: ", result);
       fetchDataEmployee();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create Employee ", error);
+      //console.log("Failed to create Employee ", error);
       setError("Failed to create Employee. Please try again.");
     }
   };

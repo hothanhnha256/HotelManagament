@@ -14,8 +14,8 @@ export interface UpdateRecordRoomDetail {
 
 export default function RecordRoomDetail(props: RecordRoomInterface) {
   const [newRecordRoom, setNewRecordRoom] = useState<UpdateRecordRoomDetail>({
-    ten: props.entry.Ten,
-    moTa: props.entry.MoTa,
+    ten: props.entry.MaPhong,
+    moTa: props.entry.GiaTien,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,11 +62,11 @@ export default function RecordRoomDetail(props: RecordRoomInterface) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Updated RecordRoom: ", result);
+      //console.log("Updated RecordRoom: ", result);
       props.refreshData(); // Refresh the data after updating
       props.onClose(); // Close the form after successful update
     } catch (error) {
-      console.log("Failed to update RecordRoom ", error);
+      //console.log("Failed to update RecordRoom ", error);
       setError("Failed to update RecordRoom. Please try again.");
     } finally {
       setIsLoading(false);

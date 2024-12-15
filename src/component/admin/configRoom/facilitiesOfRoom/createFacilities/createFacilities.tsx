@@ -61,7 +61,7 @@ export default function CreateFacilities({
       tinhTrang: newFacilities.tinhTrang,
       imageURL: newFacilities.imageURL,
     };
-    console.log("Request body: ", requestBody);
+    //console.log("Request body: ", requestBody);
 
     try {
       const response = await fetch(`${APIURL}/facilities/create/${idRoom}`, {
@@ -71,16 +71,16 @@ export default function CreateFacilities({
         },
         body: JSON.stringify(requestBody),
       });
-      console.log("Response: ", response);
+      //console.log("Response: ", response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Create new Facilities: ", result);
+      //console.log("Create new Facilities: ", result);
       fetchDataFacilities();
       setIsCreate(false); // Close the form after successful creation
     } catch (error) {
-      console.log("Failed to create Facilities ", error);
+      //console.log("Failed to create Facilities ", error);
       setError("Failed to create Facilities. Please try again.");
     }
   };
