@@ -190,14 +190,20 @@ export default function CreateEmployee({
             <label className="block text-gray-700 dark:text-gray-300">
               Vai Trò
             </label>
-            <input
-              type="text"
+            <select
               name="role"
               value={newEmployee.role}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
               required
-            />
+            >
+              <option value="">Chọn vai trò</option>
+              <option value="MANAGER">Quản lý</option>
+              <option value="RECEPTIONIST">Lễ tân</option>
+              <option value="HOUSE KEEPER">Nhân viên vệ sinh</option>
+              <option value="ROOM EMPLOYEE">Nhân viên phụ trách phòng</option>
+              <option value="OTHER">Khác</option>
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-300">
