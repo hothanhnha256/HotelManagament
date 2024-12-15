@@ -68,6 +68,8 @@ export default function RoomServiceDetail(props: RoomServiceInterface) {
     console.log("Form Data: ", formData.toString());
 
     try {
+      console.log(formData);
+      
       const response = await fetch(`${APIURL}/room-service`, {
         method: "PATCH",
         headers: {

@@ -6,6 +6,9 @@ export interface GoodRoomProps {
   MaDoTieuDung: string;
   SoLuong: string;
   MaPhong: string;
+  TenSanPham: string,
+  GiaNhapDonVi: string,
+  GiaBanDonVi: string
 }
 
 export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
@@ -139,6 +142,9 @@ export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
                       Mã đồ tiêu dùng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Tên
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Số lượng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -151,6 +157,9 @@ export default function GoodOfRoom({ idRoom }: { idRoom: string }) {
                     <tr key={amenity.MaDoTieuDung}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         {amenity.MaDoTieuDung}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {amenity.TenSanPham}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
                         {amenity.SoLuong}

@@ -66,7 +66,7 @@ export default function CreateAmenitiesRoom({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full ">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full overflow-auto max-h-[95vh] max-w-[90vw]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black dark:text-white">
             Thêm tiện nghi mới
