@@ -28,7 +28,7 @@ export default function UserSidebar() {
   useEffect(() => {
     const userToken = Cookies.get("tokenuser");
     setToken(userToken || null);
-  }, []);
+  }, [token]);
   const handleLogout = () => {
     Cookies.remove("tokenuser");
     window.location.href = "/";

@@ -68,7 +68,6 @@ export default function BookingRooms() {
     cusCitizenId: "",
     cusSex: "male",
     cusDOB: "",
-    deposit: 0,
   });
   const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -188,7 +187,6 @@ export default function BookingRooms() {
       roomIds: JSON.stringify(roomIds),
       checkInDate: format(startDate!, "yyyy-MM-dd"),
       checkOutDate: format(endDate!, "yyyy-MM-dd"),
-      deposit: bookingData.deposit.toString(),
     });
     requestBody.append("cusName", profile?.Ten || "");
     requestBody.append("cusPhoneNumber", profile?.SoDienThoai || "");
@@ -577,20 +575,6 @@ export default function BookingRooms() {
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Ngày sinh</label>
               {profile ? format(new Date(profile.NgaySinh), "dd/MM/yyyy") : ""}
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Đặt cọc</label>
-              <input
-                type="number"
-                value={bookingData.deposit}
-                onChange={(e) =>
-                  setBookingData({
-                    ...bookingData,
-                    deposit: Number(e.target.value),
-                  })
-                }
-                className="p-2 border border-gray-300 rounded w-full"
-              />
             </div>
             <div className="flex justify-end gap-2">
               <button
